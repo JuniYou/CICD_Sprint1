@@ -1,0 +1,26 @@
+{
+  "name": "cicd_sprint1",
+  "version": "1.0.0",
+  "description": "Sprint1 - Building WEB ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuniYou/CICD_Sprint1.git"
+  },
+  "author": "Shaked Asido, Michael Klaiman, Lir Goffer, Eli Ben Aharon, Yair Davidof, Koral Amrusi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuniYou/CICD_Sprint1/issues"
+  },
+  "homepage": "https://github.com/JuniYou/CICD_Sprint1#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
