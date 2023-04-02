@@ -16,21 +16,27 @@ function sendLogin() {
   else
   {
 	var xhr = new XMLHttpRequest();
-xhr.open("POST", "index.php");
+xhr.open('POST', '/process_post_req');
 xhr.setRequestHeader("Accept", "application/json");
 xhr.setRequestHeader("Content-Type", "application/json");
 
 xhr.onload = function () {
-    alert(this.responseText);
+    var t = JSON.parse(this.responseText);
+   // alert(responseText.response);
+    alert("Hello "+t.response);
   };
-
-
-xhr.send(JSON.stringify({
+  alert(JSON.stringify({
     "username": uname.value,
-    "password": pass.value
+    "password": pass.value,
+    "action": "process_login"}));
+
+  xhr.send(JSON.stringify({
+    "username": uname.value,
+    "password": pass.value,
+    "action": "process_login"
 }));
-  }
-}
+//xhr.send('{"username": "'+ uname.value + '", "password": "'+ pass.value + '", "action": "process_login" }');
+}}
 </script>
 </head>
 <body>
