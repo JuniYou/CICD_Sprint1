@@ -12,4 +12,8 @@ describe('Contents', () => {
                     data = data + chunk.toString();
                 });
                 response.on('end', () => {
+                    const body = data;
+                    ind = data.indexOf('We are a social network designated for juniors. Those who want to develop their skills and become the next seniors. Our goal is to help you make this dream come true!<br /><br />How? With us, you can easily access the most current job inquiries, job offers, and links to free and relevant study sites categorized by subject. And above all, you will be able to express yourself and create new friendships and opportunities! <br /><br />So, what are you waiting for? Sign up for free!');
+                });
+
 
