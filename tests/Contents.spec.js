@@ -5,7 +5,7 @@ describe('Contents', () => {
     describe('Main page', () =>{
         it('Site information', async () =>{
             var ind = -1;
-            const url = 'http://localhost:8080';
+            const url = 'http://localhost';
             const request = https.request(url, (response) => {
                 let data = '';
                 response.on('data', (chunk) => {
