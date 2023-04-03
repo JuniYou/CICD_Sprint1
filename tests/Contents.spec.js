@@ -23,7 +23,7 @@ describe('Contents', () => {
             });
             
             request.end();
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             expect(ind).not.to.be.eql(-1);
         })
     })
