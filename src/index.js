@@ -17,28 +17,22 @@ app.get('/getstyle', (req, res) => {
 });
 
 app.post('/process_post_req', (req, res) => {
-   try{
-   // Get the JSON data from the request
-   const data = req.body;
-   
-  // var web_data = JSON.parse(data);
-   var web_data = data;
+   try {
+      // Get the JSON data from the request
+      const data = req.body;
+      const webData = data;
+      const type = webData.action;
 
-   const type = web_data.action;
-
-   //If its a if(true) then we can send the POST reuest
-   if((type !== undefined) && (type === 'process_login') && (web_data.password) !== undefined && (web_data.username) !== undefined)
-   {
-       const obj = '{"response": "'+web_data.username+'"}';
-       res.send(obj);
+      // If it's a true statement, then we can send the POST request
+      if (type !== undefined && type === 'process_login' && webData.password !== undefined && webData.username !== undefined) {
+         const obj = `{"response": "${webData.username}"}`;
+         res.send(obj);
+      }
+   } catch (err) {
+      console.error(err);
    }
-}
-catch(err){
-   console.log(err);
-}
-   
- });
+});
 
 app.listen(port, () => {
-   console.log(`listen to port ${port}`);
+   console.log(`Listening on port ${port}`);
 });

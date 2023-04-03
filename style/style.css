@@ -1,13 +1,13 @@
 body {
-  font-family: Helvetica Neue, Helvetica, sans-serif;
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
   background: rgb(233, 159, 141);
 }
 .skew-menu {
   text-align: center;
   margin-top: 3em;
-position:relative;
-z-index:9999;
-padding: 22px;
+  position:relative;
+  z-index:9999;
+  padding: 22px;
 }
 .skew-menu ul {
   display: inline-block;
@@ -72,19 +72,19 @@ display: inline;
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
-    padding: 50px 35px;
+    padding: 50px 40px;
 }
 form *{
-    font-family: 'Poppins',sans-serif;
+    font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
     color: #ffffff;
     letter-spacing: 0.5px;
     outline: none;
     border: none;
-margin: 0 auto;
+    margin: 0 auto;
 }
 form h3{
-    font-size: 32px;
-    font-weight: 500;
+    font-size: 36px;
+    font-weight: 520;
     line-height: 42px;
     text-align: center;
 }
@@ -92,8 +92,8 @@ form h3{
 label{
     display: block;
     margin-top: 30px;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 17px;
+    font-weight: 520;
 }
 input{
     display: block;
@@ -101,7 +101,7 @@ input{
     width: 100%;
     background-color: rgba(255,255,255,0.07);
     border-radius: 3px;
-    padding: 0 10px;
+    padding: 0 18px;
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
@@ -110,12 +110,14 @@ input{
     color: #e5e5e5;
 }
 button{
+    font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+    text-transform: uppercase;
     margin-top: 50px;
     width: 100%;
     background-color: #ffffff;
-    color: #080710;
-    padding: 15px 0;
-    font-size: 18px;
+    color: #555;
+    padding: 18px 0;
+    font-size: 20px;
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
@@ -130,11 +132,11 @@ button{
   border-radius: 3px;
   padding: 5px 10px 10px 5px;
   background-color: rgba(255,255,255,0.27);
-  color: #eaf0fb;
+  color: white;
   text-align: center;
 }
 .social div:hover{
-  background-color: rgba(255,255,255,0.47);
+  background-color: rgba(255,255,255,0.27);
 }
 .social .fb{
   margin-left: 25px;
@@ -148,12 +150,12 @@ color:crimson;
 font-size:12px;
 }
 #main_page_content{
-  font-family:Calibri;
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
   font-size:20px;
   text-align: left;
   margin: auto;
   color: white;
-  width:51%; 
+  width:50%; 
   padding: 70px;
   
 }
