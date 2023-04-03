@@ -21,6 +21,7 @@ app.get('/getscripts', (req, res) => {
 });
 
 app.post('/process_post_req', (req, res) => {
+   try{
    // Get the JSON data from the request
    const data = req.body;
    
@@ -35,6 +36,10 @@ app.post('/process_post_req', (req, res) => {
        const obj = '{"response": "'+web_data.username+'"}';
        res.send(obj);
    }
+}
+catch(err){
+   console.log(err);
+}
    
  });
 

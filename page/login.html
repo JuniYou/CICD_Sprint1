@@ -25,10 +25,6 @@ xhr.onload = function () {
    // alert(responseText.response);
     alert("Hello "+t.response);
   };
-  alert(JSON.stringify({
-    "username": uname.value,
-    "password": pass.value,
-    "action": "process_login"}));
 
   xhr.send(JSON.stringify({
     "username": uname.value,
