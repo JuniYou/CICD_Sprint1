@@ -16,10 +16,6 @@ app.get('/getstyle', (req, res) => {
    res.sendFile('style/style.css', { root: './' });
 });
 
-app.get('/getscripts', (req, res) => {
-   res.sendFile('scripts/scripts.js', { root: './' });
-});
-
 app.post('/process_post_req', (req, res) => {
    try{
    // Get the JSON data from the request
