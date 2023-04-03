@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Programmers network</title>
+  <link rel="stylesheet" href="getstyle">
+  <script type="text/javascript" src="getscripts"></script>
+<script>
+function sendLogin() {
+  var uname = document.getElementById("username");
+  var pass = document.getElementById("password");
+  if (uname.value.length < 3 || pass.value.length < 6)
+  { 
+	document.getElementById("error_box").innerHTML = "Minimum length of username is 3<br />Minimum length of password is 6";
+  }
+  else
+  {
+	var xhr = new XMLHttpRequest();
+xhr.open('POST', '/process_post_req');
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Content-Type", "application/json");
+
+xhr.onload = function () {
+    var t = JSON.parse(this.responseText);
+   // alert(responseText.response);
+    alert("Hello "+t.response);
+  };
+
+  xhr.send(JSON.stringify({
+    "username": uname.value,
+    "password": pass.value,
+    "action": "process_login"
+}));
+//xhr.send('{"username": "'+ uname.value + '", "password": "'+ pass.value + '", "action": "process_login" }');
+}}
+</script>
+</head>
+<body>
+<nav class="skew-menu">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/Login">Log In</a></li>
+  </ul>
+</nav>
+<div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <form onsubmit="return false" action="">
+        <h3>WELCOME</h3>
+
+        <label for="username">Username</label>
+        <input type="text" maxlength="30" placeholder="Username" id="username">
+
+        <label for="password">Password</label>
+        <input type="password" maxlength="30" placeholder="Password" id="password">
+	<div id="error_box" class="error_box"></div>
+        <button onclick="sendLogin()">Log In</button>
+        
+        </div>
+    </form>
+  
+</body>
+</html>
+
