@@ -7,6 +7,7 @@ body {
   margin-top: 3em;
 position:relative;
 z-index:9999;
+padding: 22px;
 }
 .skew-menu ul {
   display: inline-block;
@@ -148,10 +149,11 @@ font-size:12px;
 }
 #main_page_content{
   font-family:Calibri;
-  font-size:18px;
+  font-size:20px;
   text-align: left;
   margin: auto;
   color: white;
-  width:70%; 
-  padding: 45px;
+  width:51%; 
+  padding: 70px;
+  
 }
