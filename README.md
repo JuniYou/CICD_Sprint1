@@ -8,8 +8,9 @@ Development Environment (IDE) or a Command Terminal to work with the
 project. Having these tools in place will enable you to open and run the
 project on your computer.
 
-npm install
-npm start
+ - npm install
+ - npm start
+ 
 In order to run these commands, it is required to install Node.js version
 and IDE or Command terminal on the computer.
 Definitions, dependencies, and more information about the project can
