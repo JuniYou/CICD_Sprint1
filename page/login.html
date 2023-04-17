@@ -6,32 +6,52 @@
   <link rel="stylesheet" href="getstyle">
   <script type="text/javascript" src="getscripts"></script>
 <script>
+function clean(str)
+{
+   for(var i=0; i < str.length ; i++)
+   {
+      if (str[i]<'a' || str[i]>'z')
+      {
+         if (str[i]<'A' || str[i]>'Z')
+         {
+            if (str[i]<'0' || str[i]>'9')
+            {
+               if(str[i]!= '@' && str[i]!= '.')
+               {
+                  return false;
+               }
+            }
+         }
+      }
+   }
+   return true;
+}
 function sendLogin() {
+  document.getElementById("error_box").innerHTML = "";
   var uname = document.getElementById("username");
   var pass = document.getElementById("password");
-  if (uname.value.length < 3 || pass.value.length < 6)
+  if (uname.value.length < 3 || pass.value.length < 6 || !clean(uname.value) || !clean(pass.value))
   { 
-	document.getElementById("error_box").innerHTML = "Minimum length of username is 3<br />Minimum length of password is 6";
+	  document.getElementById("error_box").innerHTML += "Minimum length of username is 3<br />Minimum length of password is 6<br />You can only use English letter, numbers, @ or .";
   }
   else
   {
-	var xhr = new XMLHttpRequest();
-xhr.open('POST', '/process_post_req');
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Content-Type", "application/json");
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/process_post_req');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
 
-xhr.onload = function () {
-    var t = JSON.parse(this.responseText);
-   // alert(responseText.response);
-    alert("Hello "+t.response);
-  };
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        alert("Hello "+t.response);
+    };
 
-  xhr.send(JSON.stringify({
-    "username": uname.value,
-    "password": pass.value,
-    "action": "process_login"
-}));
-//xhr.send('{"username": "'+ uname.value + '", "password": "'+ pass.value + '", "action": "process_login" }');
+    xhr.send(JSON.stringify({
+      "username": uname.value,
+      "password": pass.value,
+      "action": "process_login"
+    }));
+
 }}
 </script>
 </head>
