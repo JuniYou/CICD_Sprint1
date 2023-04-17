@@ -75,6 +75,10 @@ app.get('/getstyle', (req, res) => {
    res.sendFile('style/style.css', { root: './' });
 });
 
+app.get('/Register', (req, res) => {
+   res.sendFile('page/register.html', { root: './' });
+});
+
 app.post('/process_post_req', (req, res) => {
    try {
       // Get the JSON data from the request
@@ -116,7 +120,7 @@ app.post('/process_post_req', (req, res) => {
          {
             client.connect()
                .then(() => {
-                  client.query('INSERT INTO users values($1, $2, $3, $4)', [uname, pass, fname, mail])
+                  client.query('INSERT INTO users (username, password, fullname, email, permissions) values($1, $2, $3, $4, \'user\')', [uname, pass, fname, mail])
                })
                .catch((err) => {
                   throw err;
