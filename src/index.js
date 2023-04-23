@@ -5,22 +5,22 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 var session1;
 
-/*const client = new Client({
+const client = new Client({
   user: 'shakeda',
   host: 'dpg-cgugbmg2qv2fdedbo640-a.frankfurt-postgres.render.com',
   database: 'juniyoudb',
   password: 'puMtqvjlq7ftkPfuvHwZFKUuZ5tlWQiV',
   port: 5432,
   ssl: true
-});*/
+});
 
-const client = new Client({
+/*const client = new Client({
    user: 'postgres',
    host: 'localhost',
    database: 'postgres',
    password: 'aaaaaa',
    port: 5432
- });
+ });*/
 
 client.connect();
 const port = process.env.PORT || 80;
