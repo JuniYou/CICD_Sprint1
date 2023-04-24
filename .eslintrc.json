@@ -13,7 +13,10 @@
     "rules": {
         "indent": ["error", 3],
         "block-scoped-var": "off",
+        "vars-on-top": "off",
         "no-continue": "off",
+        "no-await-in-loop": "off",
+        "no-redeclare": "off",
         "max-len": "off"
     }
     

@@ -115,16 +115,15 @@ app.get('/Account', async (req, res) => {
    if (req.session.username !== undefined) {
       if (req.query.acc === undefined) {
          res.sendFile('page/account.html', { root: './' });
-      } else // requested someone else's account
-      {
+      } else {
          const { acc } = req.query;
          if (acc.length < 3 || acc.length > 30 || !clean(acc)) {
-            var strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
+            const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
             res.send(strToSend);
          } else {
             const res1 = await client.query('SELECT * FROM users WHERE username= $1', [acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res1.rows.length > 0) {
-               var strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script>function Follow(f){var xhr = new XMLHttpRequest();xhr.open("POST", "/update_user_data");xhr.setRequestHeader("Accept", "application/json");xhr.setRequestHeader("Content-Type", "application/json");xhr.onload = function () {var t = JSON.parse(this.responseText);if (t.response === "0"){alert("Success");window.location.reload();}else{alert("Error occured");}};xhr.send(JSON.stringify({"info": f,"infoType": "follow"}));}</script><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
+               let strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script>function Follow(f){var xhr = new XMLHttpRequest();xhr.open("POST", "/update_user_data");xhr.setRequestHeader("Accept", "application/json");xhr.setRequestHeader("Content-Type", "application/json");xhr.onload = function () {var t = JSON.parse(this.responseText);if (t.response === "0"){alert("Success");window.location.reload();}else{alert("Error occured");}};xhr.send(JSON.stringify({"info": f,"infoType": "follow"}));}</script><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
 
                let followed = false;
                let res2 = await client.query('SELECT * FROM follows WHERE username= $1 AND follows = $2', [req.session.username, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -145,7 +144,7 @@ app.get('/Account', async (req, res) => {
                   strToSend += '<div style="width=50%; text-align:center;">';
                   strToSend = `${strToSend}<h4>${res2.rows[i].title}</h4><h5>${res2.rows[i].content}</h5><h6>Post date: ${res2.rows[i].publishdate} by user: <a href = "/Account?acc=${res2.rows[i].postedby}">${res2.rows[i].postedby}</a>`;
                   if (res2.rows[i].postedby !== acc) {
-                     strToSend += ' Shared by: ' + `<a href = "/Account?acc=${acc}">${acc}</a>`;
+                     strToSend += ` Shared by: <a href = "/Account?acc=${acc}">${acc}</a>`;
                   }
                   strToSend += '</h6>';
                   if (res2.rows[i].postedby !== req.session.username) {
@@ -173,7 +172,7 @@ app.get('/Account', async (req, res) => {
                strToSend += '</div></body></html>';
                res.send(strToSend);
             } else {
-               var strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
+               const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
                res.send(strToSend);
             }
          }
@@ -190,7 +189,7 @@ app.post('/update_user_data', async (req, res) => {
       if (webData.info !== undefined) {
          if (webData.infoType !== undefined && webData.infoType === 'pass') {
             const pass = webData.info;
-            var tbull = true;
+            let tbull = true;
             if (!clean(pass) || pass.length > 30 || pass.length < 6) {
                tbull = false;
             }
@@ -201,7 +200,7 @@ app.post('/update_user_data', async (req, res) => {
             }
          } else if (webData.infoType !== undefined && webData.infoType === 'email') {
             const mail = webData.info;
-            var tbull = true;
+            let tbull = true;
             if (!clean(mail) || mail.length > 30 || mail.length < 6 || mail.indexOf('@') < 0 || mail.indexOf('.') < 0) {
                tbull = false;
             }
@@ -212,7 +211,7 @@ app.post('/update_user_data', async (req, res) => {
             }
          } else if (webData.infoType !== undefined && webData.infoType === 'fullname') {
             const fname = webData.info;
-            var tbull = true;
+            let tbull = true;
             if (!cleanFullName(fname) || fname.length > 100 || fname.length < 3) {
                tbull = false;
             }
@@ -273,7 +272,7 @@ app.post('/update_post_data', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'updatepost') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200 && webData.post1 !== undefined && clean(webData.post1)) {
-            var res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post1]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            const res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post1]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
             if (res2.rows.length === 1 && res2.rows[0].postedby === req.session.username) {
                await client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title, webData.content, webData.post1]);
@@ -283,7 +282,7 @@ app.post('/update_post_data', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'deletepost') {
          if (webData.post !== undefined && clean(webData.post)) {
-            var res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            const res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res2.rows.length === 1 && res2.rows[0].postedby === req.session.username) {
                await client.query('UPDATE posts SET deleted = \'1\' WHERE pid = $1', [webData.post]);
                const obj = '{"response": "0"}';
@@ -293,9 +292,9 @@ app.post('/update_post_data', async (req, res) => {
       } else if (webData.action !== undefined && webData.action === 'likepost') {
          if (webData.post !== undefined && clean(webData.post)) {
             let liked = false;
-            var res2 = await client.query('SELECT * FROM likes WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            const res2 = await client.query('SELECT * FROM likes WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res2.rows.length > 0) { liked = true; }
-            var res3 = await client.query('SELECT * FROM posts WHERE pid=$1', [webData.post]);
+            const res3 = await client.query('SELECT * FROM posts WHERE pid=$1', [webData.post]);
             if (res3.rows[0].postedby === req.session.username) {
                return;
             }
@@ -312,7 +311,7 @@ app.post('/update_post_data', async (req, res) => {
       } else if (webData.action !== undefined && webData.action === 'savepost') {
          if (webData.post !== undefined && clean(webData.post)) {
             let saved = false;
-            var res2 = await client.query('SELECT * FROM saves WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            const res2 = await client.query('SELECT * FROM saves WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res2.rows.length > 0) { saved = true; }
             if (saved) {
                client.query('DELETE FROM saves WHERE username = $1 AND pid = $2', [req.session.username, webData.post]);
@@ -327,9 +326,9 @@ app.post('/update_post_data', async (req, res) => {
       } else if (webData.action !== undefined && webData.action === 'sharepost') {
          if (webData.post !== undefined && clean(webData.post)) {
             let shared = false;
-            var res2 = await client.query('SELECT * FROM shares WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            const res2 = await client.query('SELECT * FROM shares WHERE username= $1 AND pid = $2', [req.session.username, webData.post]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res2.rows.length > 0) { shared = true; }
-            var res3 = await client.query('SELECT * FROM posts WHERE pid=$1', [webData.post]);
+            const res3 = await client.query('SELECT * FROM posts WHERE pid=$1', [webData.post]);
             if (res3.rows[0].postedby === req.session.username) {
                return;
             }
@@ -420,25 +419,24 @@ app.post('/admin_update', async (req, res) => {
 app.post('/page_loader', async (req, res) => {
    const data = req.body;
    const webData = data;
-   var i = 0;
    if (webData.info !== undefined && webData.info === 'accountpage') {
       if (req.session.username) {
-         var strToSend = '<div class=\\"submenu1\\"><div class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Account details</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">Followed users</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Followers list</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Liked posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Saved posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Statistics</div></div>';
-         var res1 = await client.query('SELECT * FROM users WHERE username= $1', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+         let strToSend = '<div class=\\"submenu1\\"><div class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Account details</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">Followed users</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Followers list</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Liked posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Saved posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Statistics</div></div>';
+         let res1 = await client.query('SELECT * FROM users WHERE username= $1', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          if (res1.rows.length > 0) {
             strToSend = `${strToSend}<div id=\\"pills-1\\"><h4 class=\\"table_title\\">Account Details</h4><table><tr><td>Username: <input type=\\"text\\" disabled maxlength=\\"100\\" value=\\"${req.session.username}\\"></td></tr><tr><td>Password (type new password if you want to change): <input id=\\"pass1\\" type=\\"password\\" maxlength=\\"100\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePass()\\"></td></tr><tr><td>E-mail: <input id=\\"email1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].email}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveEmail()\\"></td></tr><tr><td>Full name: <input id=\\"fname1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].fullname}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveFname()\\"></td></tr><tr><td><input type=\\"button\\" value=\\"Delete Account\\" onclick=\\"DeleteAcc()\\"></td></tr></table></div>`;
          } else {
             return;
          }
-         var res1 = await client.query('SELECT f.follows as follows, u.fullname as fu FROM follows f, users u WHERE f.username= $1 AND u.username = f.follows', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL THERAPY
+         res1 = await client.query('SELECT f.follows as follows, u.fullname as fu FROM follows f, users u WHERE f.username= $1 AND u.username = f.follows', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL THERAPY
          strToSend += '<div id=\\"pills-2\\" style=\\"display:none;\\">';
          if (res1.rows.length < 1) {
             strToSend += '<h4 class=\\"table_title\\">Followed users</h4>You dont follow anyone';
          }
          strToSend += '<table border=\\"1\\"><tr><td>Username</td><td>Full name</td><td>Delete</td></tr>';
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<tr>';
-            strToSend = `${strToSend}<td>` + `<a href = \\"/Account?acc=${res1.rows[i].follows}\\">${res1.rows[i].follows}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletef('${res1.rows[i].follows}')\\"></td>`;
+            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follows}\\">${res1.rows[i].follows}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletef('${res1.rows[i].follows}')\\"></td>`;
             strToSend += '</tr>';
          }
          strToSend += '</table>';
@@ -451,9 +449,9 @@ app.post('/page_loader', async (req, res) => {
             strToSend += '<h4 class=\\"table_title\\">Followers list</h4>You have no followers';
          }
          strToSend += '<table border=\\"1\\"><tr><td>Username</td><td>Full name</td><td>Delete</td></tr>';
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<tr>';
-            strToSend = `${strToSend}<td>` + `<a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
+            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
             strToSend += '</tr>';
          }
          strToSend += '</table>';
@@ -463,14 +461,14 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<div id=\\"pills-4\\" style=\\"display:none;\\">Liked Posts<br />';
          res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND pid=ANY(SELECT pid FROM likes WHERE username=$1) ORDER BY publishdate DESC', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div style=\\"width=50%; text-align:center;\\">';
             strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
-               var like = 'Like';
-               var save = 'Save';
-               var share = 'Share';
-               var res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+               let like = 'Like';
+               let save = 'Save';
+               let share = 'Share';
+               let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res3.rows.length > 0) {
                   like = 'Unlike';
                }
@@ -494,14 +492,14 @@ app.post('/page_loader', async (req, res) => {
 
          res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND pid=ANY(SELECT pid FROM saves WHERE username=$1) ORDER BY publishdate DESC', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div style=\\"width=50%; text-align:center;\\">';
             strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
-               var like = 'Like';
-               var save = 'Save';
-               var share = 'Share';
-               var res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+               let like = 'Like';
+               let save = 'Save';
+               let share = 'Share';
+               let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res3.rows.length > 0) {
                   like = 'Unlike';
                }
@@ -530,29 +528,29 @@ app.post('/page_loader', async (req, res) => {
 
          strToSend += '</div>';
 
-         var menu = '';
+         let menu = '';
          if (req.session.admin === undefined) {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          } else {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Admin\\">Admin panel</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          }
-         var obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
+         const obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
          res.send(obj);
       }
    } else if (webData.info !== undefined && webData.info === 'homepage') {
       if (req.session.username) {
-         var strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div></div>';
-         var res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div></div>';
+         let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Trending posts</h3>`;
 
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div style=\\"width=50%; text-align:center;\\">';
             strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
-               var like = 'Like';
-               var save = 'Save';
-               var share = 'Share';
-               var res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+               let like = 'Like';
+               let save = 'Save';
+               let share = 'Share';
+               let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res3.rows.length > 0) {
                   like = 'Unlike';
                }
@@ -575,9 +573,9 @@ app.post('/page_loader', async (req, res) => {
          // selection 2
          strToSend = `${strToSend}<div style=\\"text-align:center;display:none;\\" id=\\"pills-2\\"><h3 class=\\"table_title\\">My posts</h3>`;
          res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby = $1 ORDER BY publishdate DESC', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div style=\\"width=50%; text-align:center;\\">';
-            strToSend = `${strToSend}Title: <input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"><br />Text:<br /><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"10\\" cols=\\"70\\">${res1.rows[i].content}</textarea>` + `<br />Post date: ${res1.rows[i].publishdate}<br /><button onclick=\\"SavePost('${res1.rows[i].pid}')\\">Save changes</button><button onclick=\\"DeletePost('${res1.rows[i].pid}')\\">Delete post</button>`;
+            strToSend = `${strToSend}Title: <input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"><br />Text:<br /><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"10\\" cols=\\"70\\">${res1.rows[i].content}</textarea><br />Post date: ${res1.rows[i].publishdate}<br /><button onclick=\\"SavePost('${res1.rows[i].pid}')\\">Save changes</button><button onclick=\\"DeletePost('${res1.rows[i].pid}')\\">Delete post</button>`;
             strToSend += '</div>';
             strToSend += '<hr>';
          }
@@ -595,21 +593,21 @@ app.post('/page_loader', async (req, res) => {
          res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby=ANY(SELECT follows FROM follows WHERE username = $1) UNION SELECT * FROM posts p WHERE deleted=\'0\' AND p.pid=ANY(SELECT s.pid FROM shares s WHERE s.username=ANY(SELECT ff.follows FROM follows ff WHERE ff.username=$2)) ORDER BY publishdate DESC', [req.session.username, req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div style=\\"text-align:center;display:none;\\" id=\\"pills-4\\"><h3 class=\\"table_title\\">Posts by users I follow</h3>`;
 
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             if (res1.rows[i].postedby !== req.session.username) {
                strToSend += '<div style=\\"width=50%; text-align:center;\\">';
                strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a>`;
                const res5 = await client.query('SELECT * FROM follows WHERE username = $1 AND follows = $2', [req.session.username, res1.rows[i].postedby]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res5.rows.length === 0) {
                   const res6 = await client.query('SELECT * FROM shares WHERE pid = $1 AND username = ANY(SELECT follows from follows WHERE username = $2) LIMIT 1', [res1.rows[i].pid, req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
-                  strToSend += ' Shared by: ' + `<a href = \\"/Account?acc=${res6.rows[0].username}\\">${res6.rows[0].username}</a>`;
+                  strToSend += ` Shared by: <a href = \\"/Account?acc=${res6.rows[0].username}\\">${res6.rows[0].username}</a>`;
                }
                strToSend += '</h6>';
                if (res1.rows[i].postedby !== req.session.username) {
-                  var like = 'Like';
-                  var save = 'Save';
-                  var share = 'Share';
-                  var res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+                  let like = 'Like';
+                  let save = 'Save';
+                  let share = 'Share';
+                  let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                   if (res3.rows.length > 0) {
                      like = 'Unlike';
                   }
@@ -629,23 +627,23 @@ app.post('/page_loader', async (req, res) => {
          }
 
          strToSend += '</div>';
-         var menu = '';
+         let menu = '';
          if (req.session.admin === undefined) {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          } else {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Admin\\">Admin panel</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          }
-         var obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
+         const obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
          res.send(obj);
       }
    } else if (webData.info !== undefined && webData.info === 'adminpage') {
       if (req.session.username && req.session.admin) {
-         var strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
          // selection 1
-         var res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+         let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Post managing</h3>`;
          strToSend += '<table border=\\"1\\"><tr><td>ID</td><td>Title</td><td>Content</td><td>Posted by</td><td>Publish date</td><td>Save</td><td>Delete</td></tr>';
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += `<tr id=\\"line${res1.rows[i].pid}\\">`;
             strToSend = `${strToSend}<td>${res1.rows[i].pid}</td><td><input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"></td><td><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"5\\" cols=\\"50\\">${res1.rows[i].content}</textarea></td><td>${res1.rows[i].postedby}</td><td>${res1.rows[i].publishdate}</td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePost('${res1.rows[i].pid}')\\"></td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"DeletePost('${res1.rows[i].pid}')\\"></td>`;
             strToSend += '</tr>';
@@ -658,7 +656,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend = `${strToSend}<div style=\\"text-align:center;display:none;\\" id=\\"pills-2\\"><h3 class=\\"table_title\\">User managing</h3>`;
          res1 = await client.query('SELECT * FROM users'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend += '<table border=\\"1\\"><tr><td>Username</td><td>Password</td><td>E-mail</td><td>Full name</td><td>Banned</td><td>Save</td><td>Ban</td></tr>';
-         for (i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<tr>';
             let ban = 'No';
             let banBut = 'Ban';
@@ -681,7 +679,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<h3>Manage existing daily tips</h3>';
          res1 = await client.query('SELECT * FROM tips WHERE deleted = \'0\''); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend += '<table border=\\"1\\"><tr><td>ID</td><td>Title</td><td>Content</td><td>Save</td><td>Delete</td></tr>';
-         for (var i = 0; i < res1.rows.length; i += 1) {
+         for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += `<tr id=\\"lineT${res1.rows[i].pid}\\">`;
             strToSend = `${strToSend}<td>${res1.rows[i].pid}</td><td><input type=\\"text\\" id=\\"titleinT${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"></td><td><textarea maxlength=\\"5000\\" id=\\"contentTeT${res1.rows[i].pid}\\" rows=\\"5\\" cols=\\"50\\">${res1.rows[i].content}</textarea></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveTip('${res1.rows[i].pid}')\\"></td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"DeleteTip('${res1.rows[i].pid}')\\"></td>`;
             strToSend += '</tr>';
@@ -690,13 +688,13 @@ app.post('/page_loader', async (req, res) => {
 
          strToSend += '</div>';
 
-         var menu = '';
+         let menu = '';
          if (req.session.admin === undefined) {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          } else {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Admin\\">Admin panel</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
          }
-         var obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
+         const obj = `{"response": "${strToSend}", "menu": "${menu}"}`;
          res.send(obj);
       }
    }
@@ -734,9 +732,8 @@ app.post('/process_post_req', (req, res) => {
                   res.send(obj);
                }
             });
-         }
-      } // Register
-      else if (type !== undefined && type === 'process_register' && webData.password !== undefined && webData.username !== undefined && webData.email !== undefined && webData.fullname !== undefined) {
+         } // Register
+      } else if (type !== undefined && type === 'process_register' && webData.password !== undefined && webData.username !== undefined && webData.email !== undefined && webData.fullname !== undefined) {
          const uname = webData.username;
          const fname = webData.fullname;
          const pass = webData.password;
