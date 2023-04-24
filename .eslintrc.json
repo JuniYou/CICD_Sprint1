@@ -11,7 +11,11 @@
         "sourceType": "module"
     },
     "rules": {
-        "indent": ["error", 3]
+        "indent": ["error", 3],
+        "block-scoped-var": "off",
+        "no-continue": "off",
+        "max-len": "off"
     }
+    
     
 }
