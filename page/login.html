@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Programmers network</title>
   <link rel="stylesheet" href="getstyle">
-  <script type="text/javascript" src="getscripts"></script>
 <script>
 function clean(str)
 {
@@ -43,7 +42,14 @@ function sendLogin() {
 
     xhr.onload = function () {
         var t = JSON.parse(this.responseText);
-        alert("Hello "+t.response);
+        if(t.response === "1")
+        {
+            alert("Your username or password is incorrect");
+        }
+        else
+      {
+         window.location.href ="/Home";
+         }
     };
 
     xhr.send(JSON.stringify({

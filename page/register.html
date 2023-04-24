@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Programmers network</title>
   <link rel="stylesheet" href="getstyle">
-  <script type="text/javascript" src="getscripts"></script>
 <script>
 function clean(str)
 {
@@ -86,7 +85,13 @@ function sendRegister()
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function () {
         var t = JSON.parse(this.responseText);
-        alert('This user is allready exist');
+        if(t.response === "1")
+         alert('This user is allready exist');
+        else if (t.response === "0")
+        {
+         alert("You successfully registered");
+         window.location.href ="/Login";
+        }
     };
     xhr.send(JSON.stringify({
         "username": uname.value,

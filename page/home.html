@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Programmers network</title>
+  <link rel="stylesheet" href="getstyle">
+
+<script>
+
+function loadPage() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/page_loader');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        document.getElementById("page_content").innerHTML = (t.response);
+        document.getElementById("main_menu").innerHTML = t.menu;
+    };
+
+    xhr.send(JSON.stringify({
+      "info": "homepage"
+    }));
+}
+
+function AddPost() {
+    var title = document.getElementById("titleInput").value;
+    var content = document.getElementById("contentText").value;
+    if (title.length<5 || content.length < 10)
+    {
+      alert("Minimum title length is 5, minimun content length is 10");
+      return;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/update_post_data');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        if (t.response === '0')
+        {
+            alert("Added successfully");
+            window.location.reload();
+        }
+        else
+        {
+            alert("Error occured");
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "title": title,
+      "content": content,
+      "action": "addpost"
+    }));
+}
+
+function SavePost(p) {
+    var title = document.getElementById("titlein"+p).value;
+    var content = document.getElementById("contentTe"+p).value;
+    if (title.length<5 || content.length < 10)
+    {
+      alert("Minimum title length is 5, minimun content length is 10");
+      return;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/update_post_data');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        if (t.response === '0')
+        {
+            alert("Saved successfully");
+            window.location.reload();
+        }
+        else
+        {
+            alert("Error occured");
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "title": title,
+      "content": content,
+      "action": "updatepost",
+      "post1": p
+    }));
+}
+function DeletePost(p) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/update_post_data');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        if (t.response === '0')
+        {
+            alert("Deleted successfully");
+            window.location.reload();
+        }
+        else
+        {
+            alert("Error occured");
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "action": "deletepost",
+      "post": p
+    }));
+}
+
+</script>
+<script src="/getjs"></script> 
+</head>
+<body onload="loadPage();">
+<script>
+  function ChangeSelection(s)
+{
+    
+      eles = document.getElementsByClassName("opt");
+      for (var i=1;i<eles.length+1;i++)
+      {
+        if (i!=s)
+        {
+          document.getElementById("pills-"+i).style.display = "none";
+          eles[i-1].style.background="none";
+        }
+        else
+        {
+          document.getElementById("pills-"+i).style.display = "block";
+          eles[i-1].style.background="cyan";
+        }
+      }
+        
+}
+
+</script>
+<nav class="skew-menu">
+  <ul id="main_menu">
+    
+  </ul>
+</nav>
+<div id="page_content"></div>
+  
+</body>
+</html>
