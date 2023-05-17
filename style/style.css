@@ -1,6 +1,9 @@
+
+
+
 body {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-  background: rgb(233, 159, 141);
+  background: rgb(245, 198, 228);
 }
 .skew-menu {
   text-align: center;
@@ -161,4 +164,97 @@ font-size:12px;
   padding: 45px;
   
 }
+.main_content
+{
+  text-align: center;
+
+}
+.submenu1
+{
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.4px;
+    outline: none;
+    border: none;
+    margin: 0 auto;
+    width: 100%;
+    display:inline;
+}
+.opt
+{
+  background-color: transparent;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+tr:nth-child(odd) {
+  background-color: #eee;
+}
+td {
+  text-align: center;
+  padding: 0.5em 1em;
+}
+.postdiv {
+  
+    border: 0.5rem outset rgb(240, 13, 153);
+    outline: 0.5rem solid rgb(124, 64, 104);
+    box-shadow: 0 0 0 1rem rgb(177, 96, 209);
+    border-radius: 12px;
+    font: bold 1rem sans-serif;
+    margin: 2rem;
+    padding: 1rem;
+    outline-offset: 0.5rem;
+    background-color: rgb(227, 234, 194);
+    text-align:center;
+  }
+button
+{
+  outline:  0.2rem solid rgb(124, 64, 104);
+  background-color:  rgb(252, 199, 223);
+
+}
+input[type=button]{
+  outline:  0.2rem solid rgb(124, 64, 104);
+  background-color:  rgb(252, 199, 223);
+  display: table-cell;
+  margin:10px;
+  width: 100%;
+}
+input[type=text]{
+  outline:  0.2rem solid rgb(124, 64, 104);
+  background-color:  rgb(252, 199, 223);
+  display: table-cell;
+  margin:10px;
+  width: 100%;
+}
+
+input[type=password]{
+  outline:  0.2rem solid rgb(124, 64, 104);
+  background-color:  rgb(252, 199, 223);
+  display: table-cell;
+  margin:10px;
+  width: 100%;
+}
+h5{
+  padding: 10px;
+  margin: auto;
+  outline:  0.2rem solid rgb(124, 64, 104);
+  background-color:  rgb(252, 199, 223);
+  width: 70%;
+  text-align:center;
+
+}
+
+
 
