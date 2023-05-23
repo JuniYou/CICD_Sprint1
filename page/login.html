@@ -46,6 +46,10 @@ function sendLogin() {
         {
             alert("Your username or password is incorrect");
         }
+        else if(t.response === "2")
+        {
+            alert("You are blocked for 20 minutes");
+        }
         else
       {
          window.location.href ="/Home";

@@ -1,9 +1,7 @@
 
-
-
 body {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-  background: rgb(233, 159, 141);
+  background: rgb(245, 198, 228);
 }
 .skew-menu {
   text-align: center;
@@ -47,7 +45,7 @@ body {
   text-decoration: none;
   transform: skew(0deg);
 }
-.shape:first-child{
+.shape:first-child {
     background: linear-gradient(
         #1845ad,
         #23a2f6
@@ -55,7 +53,7 @@ body {
     left: -80px;
     top: -80px;
 }
-.shape:last-child{
+.shape:last-child {
     background: linear-gradient(
         to right,
         #ff512f,
@@ -64,7 +62,7 @@ body {
     right: -80px;
     bottom: -80px;
 }
-form{
+form {
     display: inline;
     background-color: rgba(255,255,255,0.13);
     position: absolute;
@@ -86,20 +84,19 @@ form *{
     border: none;
     margin: 0 auto;
 }
-form h3{
+form h3 {
     font-size: 32px;
     font-weight: 530;
     line-height: 42px;
     text-align: center;
 }
-
-label{
+label {
     display: block;
     margin-top: 30px;
     font-size: 17px;
     font-weight: 520;
 }
-input{
+input {
     display: block;
     height: 50px;
     width: 100%;
@@ -109,9 +106,9 @@ input{
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
-    max-width: 150px; /* adjust as needed */
+    max-width: 150px;                                  
 }
-::placeholder{
+::placeholder {
     color: #e5e5e5;
 }
 button{
@@ -127,11 +124,11 @@ button{
     border-radius: 5px;
     cursor: pointer;
 }
-.social{
+.social {
   margin-top: 30px;
   display: flex;
 }
-.social div{
+.social div {
   background: red;
   width: 150px;
   border-radius: 3px;
@@ -140,21 +137,21 @@ button{
   color: white;
   text-align: center;
 }
-.social div:hover{
+.social div:hover {
   background-color: rgba(255,255,255,0.27);
 }
-.social .fb{
+.social .fb {
   margin-left: 25px;
 }
-.social i{
+.social i {
   margin-right: 4px;
 }
-.error_box{
+.error_box {
 text-align:center;
 color:crimson;
 font-size:12px;
 }
-#main_page_content{
+#main_page_content {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
   font-size:20px;
   text-align: left;
@@ -164,13 +161,11 @@ font-size:12px;
   padding: 45px;
   
 }
-.main_content
-{
+.main_content {
   text-align: center;
 
 }
-.submenu1
-{
+.submenu1 {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
     color: #ffffff;
     letter-spacing: 0.4px;
@@ -180,8 +175,66 @@ font-size:12px;
     width: 100%;
     display:inline;
 }
-.opt
-{
+.opt {
   background-color: transparent;
   cursor: pointer;
+}
+
+table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+tr:nth-child(odd) {
+  background-color: #eee;
+}
+td {
+  text-align: center;
+  padding: 0.5em 1em;
+}
+.postdiv {
+  
+    border: 0.5rem outset rgb(240, 13, 153);
+    outline: 0.5rem solid rgb(124, 64, 104);
+    box-shadow: 0 0 0 1rem rgb(177, 96, 209);
+    border-radius: 12px;
+    font: bold 1rem sans-serif;
+    margin: 2rem;
+    padding: 1rem;
+    outline-offset: 0.5rem;
+    background-color: rgb(228, 230, 221);
+    text-align:center;
+}
+button {
+    
+    outline:  0.2rem solid rgb(124, 64, 104);
+    background-color:  rgb(252, 199, 223);
+}
+input[type=button] {
+    outline:  0.2rem solid rgb(124, 64, 104);
+    background-color:  rgb(252, 199, 223);
+    display: table-cell;
+    margin:10px;
+    width: 100%;
+}
+input[type=text] {
+    outline:  0.2rem solid rgb(124, 64, 104);
+    background-color:  rgb(252, 199, 223);
+    display: table-cell;
+    margin:10px;
+    width: 100%;
+}
+  input[type=password] {
+    outline:  0.2rem solid rgb(124, 64, 104);
+    background-color:  rgb(252, 199, 223);
+    display: table-cell;
+    margin:10px;
+    width: 100%;
+}
+h5 {
+    padding: 10px;
+    margin: auto;
+    outline:  0.2rem solid rgb(124, 64, 104);
+    background-color:  rgb(252, 199, 223);
+    width: 70%;
+    text-align:center;
 }
