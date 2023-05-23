@@ -1,9 +1,7 @@
 
-
-
 body {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-  background: rgb(233, 159, 141);
+  background: rgb(245, 198, 228);
 }
 .skew-menu {
   text-align: center;
@@ -185,3 +183,30 @@ font-size:12px;
   background-color: transparent;
   cursor: pointer;
 }
+
+
+table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+tr:nth-child(odd) {
+  background-color: #eee;
+}
+td {
+  text-align: center;
+  padding: 0.5em 1em;
+}
+.postdiv {
+  
+    border: 0.5rem outset rgb(240, 13, 153);
+    outline: 0.5rem solid rgb(124, 64, 104);
+    box-shadow: 0 0 0 1rem rgb(177, 96, 209);
+    border-radius: 12px;
+    font: bold 1rem sans-serif;
+    margin: 2rem;
+    padding: 1rem;
+    outline-offset: 0.5rem;
+    background-color: rgb(227, 234, 194);
+    text-align:center;
+  }
