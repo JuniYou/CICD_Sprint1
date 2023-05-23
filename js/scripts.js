@@ -25,6 +25,7 @@ function Like(p,elem) {
       "post": p
     }));
 }
+
 function Save(p,elem) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/update_post_data');
