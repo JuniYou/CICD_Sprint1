@@ -268,7 +268,7 @@ app.post('/update_post_data', async (req, res) => {
       const webData = data;
       if (webData.action !== undefined && webData.action === 'addpost') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200) {
-            client.query('INSERT INTO posts (title, content, postedby, publishdate) values($1, $2, $3, NOW())', [webData.title.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.content.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), req.session.username]);
+            client.query('INSERT INTO posts (title, content, postedby, publishdate) values($1, $2, $3, NOW())', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), req.session.username]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -277,7 +277,7 @@ app.post('/update_post_data', async (req, res) => {
             const res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post1]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
             if (res2.rows.length === 1 && res2.rows[0].postedby === req.session.username) {
-               await client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.content.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.post1]);
+               await client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
                const obj = '{"response": "0"}';
                res.send(obj);
             }
@@ -356,7 +356,7 @@ app.post('/admin_update', async (req, res) => {
       const webData = data;
       if (webData.action !== undefined && webData.action === 'updatepost') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200 && webData.post1 !== undefined && clean(webData.post1)) {
-            client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.content.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.post1]);
+            client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -396,7 +396,7 @@ app.post('/admin_update', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'updatetip') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200 && webData.post1 !== undefined && clean(webData.post1)) {
-            client.query('UPDATE tips SET title=$1, content=$2 WHERE pid = $3', [webData.title.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.content.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.post1]);
+            client.query('UPDATE tips SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -408,7 +408,7 @@ app.post('/admin_update', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'addtip') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200) {
-            client.query('INSERT INTO tips (title, content) values($1, $2)', [webData.title.replaceAll('"', '&quot;').replaceAll('\\', '\\\\'), webData.content.replaceAll('"', '&quot;').replaceAll('\\', '\\\\')]);
+            client.query('INSERT INTO tips (title, content) values($1, $2)', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\')]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
