@@ -2,7 +2,7 @@ import express from 'express';
 import pkg from 'pg';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import ip from 'ip';
+import requestIp from 'request-ip';
 
 const { Client } = pkg;
 
@@ -783,7 +783,7 @@ app.post('/process_post_req', async (req, res) => {
       if (type !== undefined && type === 'process_login' && webData.password !== undefined && webData.username !== undefined) {
          if (clean(webData.password) && clean(webData.username)) {
             // callback
-            const res11 = await client.query('SELECT failures AS f FROM login WHERE ipaddress = $1 AND lastdate + (20 * interval \'1 minute\') > Now() ', [req.socket.remoteAddress]);
+            const res11 = await client.query('SELECT failures AS f FROM login WHERE ipaddress = $1 AND lastdate + (20 * interval \'1 minute\') > Now() ', [requestIp.getClientIp(req)]);
             if (res11.rows.length > 0 && res11.rows[0].f >= 5) {
                const obj = '{"response": "2"}';
                res.send(obj);
@@ -802,7 +802,7 @@ app.post('/process_post_req', async (req, res) => {
                   req.session.username = res1.rows[0].username;
                   const res111555 = await client.query('SELECT * from tips where deleted = \'0\'');
                   if (res111555.rows.length > 0) {
-                     client.query('INSERT INTO loginlog (ip, username, loggedtime) values($1, $2, now())', [req.socket.remoteAddress, res1.rows[0].username]);
+                     client.query('INSERT INTO loginlog (ip, username, loggedtime) values($1, $2, now())', [requestIp.getClientIp(req), res1.rows[0].username]);
                      const res111 = await client.query('SELECT pidtip AS p FROM latestlogins WHERE username = $1 AND logindate + (1440 * interval \'1 minute\') > Now()', [req.session.username]);
                      if (res111.rows.length === 0) {
                         const res222 = await client.query('SELECT pidtip AS p FROM latestlogins WHERE username = $1', [req.session.username]);
@@ -828,10 +828,10 @@ app.post('/process_post_req', async (req, res) => {
                   res.send(obj);
                } else {
                   if (res11.rows.length === 0) {
-                     client.query('DELETE from login WHERE ipaddress = $1 ', [req.socket.remoteAddress]);
-                     client.query('INSERT INTO login (ipaddress, failures, lastdate) values($1, 1, now())', [req.socket.remoteAddress]);
+                     client.query('DELETE from login WHERE ipaddress = $1 ', [requestIp.getClientIp(req)]);
+                     client.query('INSERT INTO login (ipaddress, failures, lastdate) values($1, 1, now())', [requestIp.getClientIp(req)]);
                   } else {
-                     client.query('UPDATE login SET failures = 1 + failures WHERE ipaddress = $1', [req.socket.remoteAddress]);
+                     client.query('UPDATE login SET failures = 1 + failures WHERE ipaddress = $1', [requestIp.getClientIp(req)]);
                   }
                   const obj = '{"response": "1"}';
                   res.send(obj);
