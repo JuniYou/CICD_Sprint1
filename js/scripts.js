@@ -127,3 +127,7 @@ function clean_fullname(str)
    }
    return true;
 }
+function loadp()
+{
+    document.getElementById("page_content").innerHTML = document.getElementById("page_content").innerHTML.replaceAll('\n','<br />');
+}

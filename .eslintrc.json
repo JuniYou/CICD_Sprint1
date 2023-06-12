@@ -18,10 +18,7 @@
         "no-await-in-loop": "off",
         "no-redeclare": "off",
         "max-len": "off",
-        "no-param-reassign": "off",
-        "no-unused-vars": "off",
-        "no-undef": "off",
-        "camelcase": "off"
+        "no-console": "off"
     }
     
     
