@@ -15,6 +15,16 @@ const client = new Client({
    ssl: true,
 });
 
+/*
+const client = new Client({
+   user: 'postgres',
+   host: 'localhost',
+   database: 'postgres',
+   password: 'aaaaaa',
+   port: 5432
+ });*/
+
+
 client.connect();
 const port = process.env.PORT || 80;
 const app = express();
@@ -105,6 +115,9 @@ app.get('/Admin', (req, res) => {
 app.get('/getjs', (req, res) => {
    res.sendFile('js/scripts.js', { root: './' });
 });
+app.get('/getjscomment', (req, res) => {
+   res.sendFile('js/scriptscomm.js', { root: './' });
+});
 app.get('/Home', (req, res) => {
    if (req.session.username !== undefined) {
       res.sendFile('page/home.html', { root: './' });
@@ -125,19 +138,21 @@ app.get('/Account', async (req, res) => {
          } else {
             const res1 = await client.query('SELECT * FROM users WHERE username= $1', [acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
             if (res1.rows.length > 0) {
-               let strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script>function Follow(f){var xhr = new XMLHttpRequest();xhr.open("POST", "/update_user_data");xhr.setRequestHeader("Accept", "application/json");xhr.setRequestHeader("Content-Type", "application/json");xhr.onload = function () {var t = JSON.parse(this.responseText);if (t.response === "0"){alert("Success");window.location.reload();}else{alert("Error occured");}};xhr.send(JSON.stringify({"info": f,"infoType": "follow"}));}</script><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
-
+               let strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script>function Follow(f){var xhr = new XMLHttpRequest();xhr.open("POST", "/update_user_data");xhr.setRequestHeader("Accept", "application/json");xhr.setRequestHeader("Content-Type", "application/json");xhr.onload = function () {var t = JSON.parse(this.responseText);if (t.response === "0"){alert("Success");window.location.reload();}else{alert("Error occured");}};xhr.send(JSON.stringify({"info": f,"infoType": "follow"}));}</script><link rel="stylesheet" href="getstyle"></head><body onload="loadp();"><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
+               
                let followed = false;
                let res2 = await client.query('SELECT * FROM follows WHERE username= $1 AND follows = $2', [req.session.username, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
-               if (res2.rows.length > 0) { followed = true; }
-               strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input type="button" value="`;
-               if (!followed) {
-                  strToSend += 'Follow';
-               } else {
-                  strToSend += 'Unfollow';
+               if(req.session.username!=acc)
+               {
+                  if (res2.rows.length > 0) { followed = true; }
+                  strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input type="button" value="`;
+                  if (!followed) {
+                     strToSend += 'Follow';
+                  } else {
+                     strToSend += 'Unfollow';
+                  }
+                  strToSend += `" onclick="Follow('${res1.rows[0].username}')"></td></tr></table></div>`;
                }
-               strToSend += `" onclick="Follow('${res1.rows[0].username}')"></td></tr></table></div>`;
-
                // posts
                strToSend += '<h4 class="table_title">Latest posts by this user</h4>';
                res2 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby= $1 UNION SELECT * FROM posts p WHERE p.pid=ANY(SELECT s.pid FROM shares s WHERE s.username = $2) ORDER BY publishdate DESC', [acc, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -165,7 +180,78 @@ app.get('/Account', async (req, res) => {
                      if (res3.rows.length > 0) {
                         share = 'Unshare';
                      }
-                     strToSend += `<input type="button" id="like${res2.rows[i].pid}" value="${like}" onclick="Like(${res2.rows[i].pid},this)">&nbsp<input type="button" id="save${res2.rows[i].pid}" value="${save}" onclick="Save(${res2.rows[i].pid},this)">&nbsp<input type="button" id="share${res2.rows[i].pid}" value="${share}" onclick="Share(${res2.rows[i].pid},this)">`;
+                     strToSend += `<input class="likebutton" type="button" id="like${res2.rows[i].pid}" value="${like}" onclick="Like(${res2.rows[i].pid},this)">&nbsp<input type="button" id="save${res2.rows[i].pid}" value="${save}" onclick="Save(${res2.rows[i].pid},this)">&nbsp<input type="button" id="share${res2.rows[i].pid}" value="${share}" onclick="Share(${res2.rows[i].pid},this)">&nbsp`;
+                  }
+                  strToSend += `<input type="button" id="comment${res2.rows[i].pid}" value="Comment" onclick="location.href=\'/Post?pid=${res2.rows[i].pid}\'"></div>`;
+                  strToSend += '<hr>';
+               }
+
+               strToSend += '</div></body></html>';
+               res.send(strToSend);
+            } else {
+               const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
+               res.send(strToSend);
+            }
+         }
+      }
+   } else {
+      res.redirect('/Login');
+   }
+});
+
+app.get('/Post', async (req, res) => {
+   if (req.session.username !== undefined) {
+      if (req.query.pid === undefined) {
+         res.redirect('/Home');
+      } else {
+         const { pid } = req.query;
+         if (!clean(pid) && !isNaN(pid)) {
+            const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
+            res.send(strToSend);
+         } else {
+            const res1 = await client.query('SELECT * FROM posts WHERE pid= $1', [pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+            if (res1.rows.length > 0) {
+               let strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script src="/getjscomment"></script><link rel="stylesheet" href="getstyle"></head><body onload="loadp();"><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
+
+               strToSend += '<div class="postdiv">';
+               strToSend = `${strToSend}<h4>${res1.rows[0].title}</h4><h5>${res1.rows[0].content}</h5><h6>Post date: ${res1.rows[0].publishdate} by user: <a href = "/Account?acc=${res1.rows[0].postedby}">${res1.rows[0].postedby}</a>`;
+
+               strToSend += '</h6>';
+               if (res1.rows[0].postedby !== req.session.username) {
+                  let like = 'Like';
+                  let save = 'Save';
+                  let share = 'Share';
+                  let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+                  if (res3.rows.length > 0) {
+                     like = 'Unlike';
+                  }
+                  res3 = await client.query('SELECT * FROM saves WHERE username = $1 AND pid= $2', [req.session.username, pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+                  if (res3.rows.length > 0) {
+                     save = 'Unsave';
+                  }
+                  res3 = await client.query('SELECT * FROM shares WHERE username = $1 AND pid= $2', [req.session.username, pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+                  if (res3.rows.length > 0) {
+                     share = 'Unshare';
+                  }
+                  strToSend += `<input class="likebutton" type="button" id="like${res1.rows[0].pid}" value="${like}" onclick="Like(${res1.rows[0].pid},this)">&nbsp<input type="button" id="save${res1.rows[0].pid}" value="${save}" onclick="Save(${res1.rows[0].pid},this)">&nbsp<input type="button" id="share${res1.rows[0].pid}" value="${share}" onclick="Share(${res1.rows[0].pid},this)">`;
+               }
+               strToSend += '</div>';
+               strToSend += '<hr>';
+               //add comment panel
+               strToSend += '<h3>Add new comment</h3>';
+               strToSend = `${strToSend}Content:<br />`;
+               strToSend += '<textarea maxlength="500" id="contentComment" rows="10" cols="70"></textarea><br />';
+               strToSend += '<button onclick="AddComment('+pid+')">Add comment</button>';
+               //show all comments panel
+               strToSend += '<h3>Post comments</h3>';
+               let res55 = await client.query('SELECT * FROM comment WHERE pid= $1 ORDER BY date DESC', [pid]);
+               for (let i = 0; i < res55.rows.length; i += 1) {
+                  strToSend += '<div class="postdiv">';
+                  strToSend = `${strToSend}<h5>${res55.rows[i].content}</h5><h6>Comment date: ${res55.rows[i].date} by user: <a href = "/Account?acc=${res55.rows[i].uname}">${res55.rows[i].uname}</a>`;
+                  strToSend += '</h6>';
+                  if(res55.rows[i].uname===req.session.username || req.session.admin !== undefined)
+                  {
+                     strToSend += '<button onclick="DeleteComment('+res55.rows[i].cid+')">Delete comment</button>';
                   }
                   strToSend += '</div>';
                   strToSend += '<hr>';
@@ -174,7 +260,7 @@ app.get('/Account', async (req, res) => {
                strToSend += '</div></body></html>';
                res.send(strToSend);
             } else {
-               const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">User not found</div></body></html>';
+               const strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><link rel="stylesheet" href="getstyle"></head><body><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">Post not found</div></body></html>';
                res.send(strToSend);
             }
          }
@@ -242,7 +328,7 @@ app.post('/update_user_data', async (req, res) => {
             const obj = '{"response": "0"}';
             res.send(obj);
          } else if (webData.infoType !== undefined && webData.infoType === 'follow') {
-            if (!clean(webData.info)) {
+            if (!clean(webData.info) || req.session.username == webData.info) {
                return;
             }
             let followed = false;
@@ -266,9 +352,29 @@ app.post('/update_post_data', async (req, res) => {
    if (req.session.username !== undefined) {
       const data = req.body;
       const webData = data;
-      if (webData.action !== undefined && webData.action === 'addpost') {
+      if (webData.action !== undefined && webData.action === 'addcomment') {
+         if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 500 && webData.pid !== undefined && !isNaN(webData.pid) && clean(webData.pid)) {
+            const res2 = await client.query('SELECT * FROM posts WHERE pid = $1', [webData.pid]);
+            if (res2.rows.length === 1)
+            {
+               client.query('INSERT INTO comment (pid, content, uname, date) values($1, $2, $3, NOW())', [webData.pid, webData.content.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), req.session.username]);
+               const obj = '{"response": "0"}';
+               res.send(obj);
+            }
+         }
+      } else if (webData.action !== undefined && webData.action === 'deletecomment') {
+         if (webData.pid !== undefined && !isNaN(webData.pid) && clean(webData.pid)) {
+            const res2 = await client.query('SELECT * FROM comment WHERE cid = $1', [webData.pid]);
+            if (res2.rows.length === 1 && (res2.rows[0].uname===req.session.username || req.session.admin !== undefined))
+            {
+               client.query('DELETE FROM comment WHERE cid = $1', [webData.pid]);
+               const obj = '{"response": "0"}';
+               res.send(obj);
+            }
+         }
+      } else if (webData.action !== undefined && webData.action === 'addpost') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200) {
-            client.query('INSERT INTO posts (title, content, postedby, publishdate) values($1, $2, $3, NOW())', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), req.session.username]);
+            client.query('INSERT INTO posts (title, content, postedby, publishdate) values($1, $2, $3, NOW())', [webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), req.session.username]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -277,7 +383,7 @@ app.post('/update_post_data', async (req, res) => {
             const res2 = await client.query('SELECT * FROM posts WHERE pid= $1 AND deleted = \'0\'', [webData.post1]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
             if (res2.rows.length === 1 && res2.rows[0].postedby === req.session.username) {
-               await client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
+               await client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
                const obj = '{"response": "0"}';
                res.send(obj);
             }
@@ -356,7 +462,7 @@ app.post('/admin_update', async (req, res) => {
       const webData = data;
       if (webData.action !== undefined && webData.action === 'updatepost') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200 && webData.post1 !== undefined && clean(webData.post1)) {
-            client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
+            client.query('UPDATE posts SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -396,7 +502,7 @@ app.post('/admin_update', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'updatetip') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200 && webData.post1 !== undefined && clean(webData.post1)) {
-            client.query('UPDATE tips SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
+            client.query('UPDATE tips SET title=$1, content=$2 WHERE pid = $3', [webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.post1]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -408,7 +514,7 @@ app.post('/admin_update', async (req, res) => {
          }
       } else if (webData.action !== undefined && webData.action === 'addtip') {
          if (webData.content !== undefined && webData.content.length > 9 && webData.content.length <= 5000 && webData.title !== undefined && webData.title.length > 4 && webData.title.length < 200) {
-            client.query('INSERT INTO tips (title, content) values($1, $2)', [webData.title.replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/"/g, '&quot;').replace(/\\/g, '\\\\')]);
+            client.query('INSERT INTO tips (title, content) values($1, $2)', [webData.title.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\'), webData.content.replace(/\n/g,'&#13;&#10;').replace(/"/g, '&quot;').replace(/\\/g, '\\\\')]);
             const obj = '{"response": "0"}';
             res.send(obj);
          }
@@ -418,6 +524,185 @@ app.post('/admin_update', async (req, res) => {
    }
 });
 
+app.post('/loadusers', async (req, res) => {
+   if (req.session.username !== undefined) {
+      const data = req.body;
+      const webData = data;
+      if (webData.action !== undefined && webData.action === 'loadusers') {
+         let strToSend = '';
+         let res1 = await client.query('SELECT m.usersender,m.userreceiver,u1.fullname as sendername,u2.fullname as receivername FROM messages m,users u1,users u2 WHERE (usersender = $1 OR userreceiver = $2) AND m.usersender=u1.username AND m.userreceiver=u2.username ORDER BY timesend DESC',[req.session.username,req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+         let users = [];
+         let nam = [];
+         let read = [];
+         for (let i = 0; i < res1.rows.length; i += 1) {
+            if(res1.rows[i].usersender!=req.session.username)
+            {
+               if(!users.includes(res1.rows[i].usersender))
+               {
+                  users.push(res1.rows[i].usersender);
+                  nam.push(res1.rows[i].sendername);
+                  let res3 = await client.query('SELECT * FROM messages WHERE usersender = $1 AND userreceiver = $2 AND read = \'0\'',[res1.rows[i].usersender,req.session.username]);
+                  if(res3.rows.length===0)
+                  {
+                     read.push(1);
+                  }
+                  else
+                  {
+                     read.push(0);
+                  }
+               }
+            }
+            else if(res1.rows[i].userreceiver!=req.session.username)
+            {
+               if(!users.includes(res1.rows[i].userreceiver))
+               {
+                  users.push(res1.rows[i].userreceiver);
+                  nam.push(res1.rows[i].receivername);
+                  let res3 = await client.query('SELECT * FROM messages WHERE usersender = $1 AND userreceiver = $2 AND read = \'0\'',[res1.rows[i].userreceiver,req.session.username]);
+                  if(res3.rows.length===0)
+                  {
+                     read.push(1);
+                  }
+                  else
+                  {
+                     read.push(0);
+                  }
+               }
+            }
+         }
+         for (let i = 0; i < users.length; i += 1) {
+            if(read[i]===1)
+               strToSend += '<div class=\\"messege\\"><span class=\\"login orange\\" onclick=\\"refresh(\''+users[i]+'\')\\">'+users[i]+ ' ('+nam[i]+')'+'</span></div>';
+            else
+               strToSend += '<div class=\\"messege\\"><span class=\\"login orange\\" onclick=\\"refresh(\''+users[i]+'\')\\">'+users[i]+ ' ('+nam[i]+')'+' <span class=\\"dot\\"></span></span></div>';
+         }
+
+         
+         const obj = `{"users": "${strToSend}"}`;
+         res.send(obj);
+         
+      } 
+   } else {
+      res.redirect('/Login');
+   }
+});
+
+app.post('/loadmessages', async (req, res) => {
+   if (req.session.username !== undefined) {
+      const data = req.body;
+      const webData = data;
+      if (webData.action !== undefined && webData.action === 'loadmessages' && webData.user !== undefined && clean(webData.user)) {
+         let strToSend = '';
+         let res1 = await client.query('SELECT * FROM messages WHERE (usersender = $1 AND userreceiver = $2) OR (usersender = $3 AND userreceiver = $4) ORDER BY timesend DESC',[req.session.username,webData.user,webData.user,req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+         let messages = [];
+         let ms = [];
+         for (let i = 0; i < res1.rows.length; i += 1) {
+            messages.push(res1.rows[i].message);
+            if (res1.rows[i].usersender === req.session.username)
+            {
+               ms.push(1);
+            }
+            else
+            {
+               ms.push(0);
+            }
+         }
+         let res2 = await client.query('SELECT fullname FROM users WHERE username = $1',[webData.user]);
+         if(res2.rows.length<1)
+            return;
+         strToSend += '<h5>Chat with <span style=\\"color:green;\\">'+webData.user+' ('+res2.rows[0].fullname+')'+'</span></h5>';
+         for (let i = 0; i < messages.length; i += 1) {
+            if(ms[i]===1)
+               strToSend += '<div class=\\"messege\\"><span class=\\"login orange\\"><span style=\\"color:green;\\">You: </span>'+messages[i]+'</span></div>';
+            else
+               strToSend += '<div class=\\"messege\\"><span class=\\"login orange\\"><span style=\\"color:green;\\">'+webData.user+": </span>"+messages[i]+'</span></div>';
+         }
+         client.query('UPDATE messages SET read = \'1\' WHERE usersender = $1 AND userreceiver = $2',[webData.user,req.session.username]);
+         
+         const obj = `{"messages": "${strToSend}"}`;
+         res.send(obj);
+         
+      } 
+   } else {
+      res.redirect('/Login');
+   }
+});
+
+app.post('/sendmessages', async (req, res) => {
+   if (req.session.username !== undefined) {
+      const data = req.body;
+      const webData = data;
+      if (webData.action !== undefined && webData.action === 'sendmessage' && webData.user !== undefined && clean(webData.user) && webData.mess !== undefined && webData.mess.length > 0 && webData.mess.length <= 50) {
+         let res2 = await client.query('SELECT * FROM users WHERE username = $1',[webData.user]);
+         if(res2.rows.length<1)
+            return;
+         client.query('INSERT INTO messages (usersender,userreceiver,message,timesend,read) VALUES($1,$2,$3,NOW(),\'0\')',[req.session.username,webData.user,webData.mess.replace(/"/g, '&quot;').replace(/\\/g, '\\\\')]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+
+         const obj = '{"response": "0"}';
+         res.send(obj);
+         
+      } 
+   } else {
+      res.redirect('/Login');
+   }
+});
+app.post('/sendmessagesbyu', async (req, res) => {
+   if (req.session.username !== undefined) {
+      const data = req.body;
+      const webData = data;
+      if (webData.action !== undefined && webData.action === 'sendmessage' && webData.user !== undefined && webData.mess !== undefined && webData.mess.length > 0 && webData.mess.length <= 50 && webData.c !== undefined) {
+         let res2 = undefined;
+         let usr= undefined;
+         if(webData.c === '1')
+         {
+            if(!clean(webData.user))
+            {
+               const obj = '{"response": "1"}';
+               res.send(obj);
+               return;
+            }
+             res2 = await client.query('SELECT * FROM users WHERE username = $1',[webData.user]);
+         }
+         else
+         {
+            if(!cleanFullName(webData.user))
+            {
+               const obj = '{"response": "1"}';
+               res.send(obj);
+               return;
+            }
+            res2 = await client.query('SELECT * FROM users WHERE fullname = $1',[webData.user]);
+         }
+         if(res2.rows.length<1)
+         {
+            const obj = '{"response": "1"}';
+            res.send(obj);
+            return;
+         }
+         if(webData.c==='1')
+            usr = webData.user;
+         else
+         {
+            let res432 = await client.query('SELECT username FROM users WHERE fullname = $1',[webData.user]);
+            if(res432.rows.length===1)
+               usr = res432.rows[0].username;
+            else
+            {
+               const obj = '{"response": "2"}';
+               res.send(obj);
+               return;
+            }
+         }
+         client.query('INSERT INTO messages (usersender,userreceiver,message,timesend,read) VALUES($1,$2,$3,NOW(),\'0\')',[req.session.username,usr,webData.mess.replace(/"/g, '&quot;').replace(/\\/g, '\\\\')]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
+
+         const obj = '{"response": "0"}';
+         res.send(obj);
+         
+      } 
+   } else {
+      res.redirect('/Login');
+   }
+});
 app.post('/page_loader', async (req, res) => {
    const data = req.body;
    const webData = data;
@@ -482,9 +767,9 @@ app.post('/page_loader', async (req, res) => {
                if (res3.rows.length > 0) {
                   share = 'Unshare';
                }
-               strToSend += `<input type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">`;
+               strToSend += `<input=\\"likebutton\\" type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">&nbsp`;
             }
-            strToSend += '</div>';
+            strToSend += `<input type=\\"button\\" id=\\"comment${res1.rows[i].pid}\\" value=\\"Comment\\" onclick=\\"location.href=\'/Post?pid=${res1.rows[i].pid}\'\\"></div>`;
             strToSend += '<hr>';
          }
 
@@ -513,9 +798,9 @@ app.post('/page_loader', async (req, res) => {
                if (res3.rows.length > 0) {
                   share = 'Unshare';
                }
-               strToSend += `<input type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">`;
+               strToSend += `<input class=\\"likebutton\\" type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">&nbsp`;
             }
-            strToSend += '</div>';
+            strToSend += `<input type=\\"button\\" id=\\"comment${res1.rows[i].pid}\\" value=\\"Comment\\" onclick=\\"location.href=\'/Post?pid=${res1.rows[i].pid}\'\\"></div>`;
             strToSend += '<hr>';
          }
 
@@ -541,7 +826,7 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'homepage') {
       if (req.session.username) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:#B0E0E6;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div><div id=\\"chatselection\\" class=\\"opt\\" onclick=\\"ChangeSelection(7)\\">Chat</div></div>';
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Trending posts</h3>`;
 
@@ -564,9 +849,9 @@ app.post('/page_loader', async (req, res) => {
                if (res3.rows.length > 0) {
                   share = 'Unshare';
                }
-               strToSend += `<input type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">`;
+               strToSend += `<input class=\\"likebutton\\" type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">&nbsp`;
             }
-            strToSend += '</div>';
+            strToSend += `<input type=\\"button\\" id=\\"comment${res1.rows[i].pid}\\" value=\\"Comment\\" onclick=\\"location.href=\'/Post?pid=${res1.rows[i].pid}\'\\"></div>`;
             strToSend += '<hr>';
          }
 
@@ -597,7 +882,7 @@ app.post('/page_loader', async (req, res) => {
 
          for (let i = 0; i < res1.rows.length; i += 1) {
             if (res1.rows[i].postedby !== req.session.username) {
-               strToSend += '<div style=\\"width=50%; text-align:center;\\">';
+               strToSend += '<div class=\\"postdiv\\"\\">';
                strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a>`;
                const res5 = await client.query('SELECT * FROM follows WHERE username = $1 AND follows = $2', [req.session.username, res1.rows[i].postedby]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res5.rows.length === 0) {
@@ -610,7 +895,7 @@ app.post('/page_loader', async (req, res) => {
                   let save = 'Save';
                   let share = 'Share';
                   let res3 = await client.query('SELECT * FROM likes WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
-                  if (res3.rows.length > 0) {
+                  if (res3.rows.length > 0) { 
                      like = 'Unlike';
                   }
                   res3 = await client.query('SELECT * FROM saves WHERE username = $1 AND pid= $2', [req.session.username, res1.rows[i].pid]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -621,9 +906,9 @@ app.post('/page_loader', async (req, res) => {
                   if (res3.rows.length > 0) {
                      share = 'Unshare';
                   }
-                  strToSend += `<input type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">`;
+                  strToSend += `<input class=\\"likebutton\\" type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">&nbsp`;
                }
-               strToSend += '</div>';
+               strToSend += `<input type=\\"button\\" id=\\"comment${res1.rows[i].pid}\\" value=\\"Comment\\" onclick=\\"location.href=\'/Post?pid=${res1.rows[i].pid}\'\\"></div>`;
                strToSend += '<hr>';
             }
          }
@@ -653,9 +938,9 @@ app.post('/page_loader', async (req, res) => {
                if (res3.rows.length > 0) {
                   share = 'Unshare';
                }
-               strToSend += `<input type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">`;
+               strToSend += `<input class=\\"likebutton\\" type=\\"button\\" id=\\"like${res1.rows[i].pid}\\" value=\\"${like}\\" onclick=\\"Like(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"save${res1.rows[i].pid}\\" value=\\"${save}\\" onclick=\\"Save(${res1.rows[i].pid},this)\\">&nbsp<input type=\\"button\\" id=\\"share${res1.rows[i].pid}\\" value=\\"${share}\\" onclick=\\"Share(${res1.rows[i].pid},this)\\">&nbsp`;
             }
-            strToSend += '</div>';
+            strToSend += `<input type=\\"button\\" id=\\"comment${res1.rows[i].pid}\\" value=\\"Comment\\" onclick=\\"location.href=\'/Post?pid=${res1.rows[i].pid}\'\\"></div>`;
             strToSend += '<hr>';
          }
 
@@ -698,6 +983,23 @@ app.post('/page_loader', async (req, res) => {
             }
          }
          strToSend += '</div>';
+
+         //selection 7 chat (refresh method)
+         strToSend = `${strToSend}<div style=\\"text-align:center;display:none;\\" id=\\"pills-7\\"><h3 class=\\"table_title\\">Chat</h3>`;
+         strToSend += '<div id=\\"chat\\">';
+         strToSend += '<div id=\\"messege\\"><i class=\\"grey\\">Select user you want to chat</i></div>';
+         strToSend += '<div id=\\"online\\"><i class=\\"grey\\">users</i></div>';
+         strToSend += '<div class=\\"clear\\"></div>';
+
+         strToSend += '<div id=\\"frm\\">';
+			strToSend += '<input id=\\"mestext\\" type=\\"text\\" name=\\"messege\\" maxlength=\\"50\\" placeholder=\\"Message text\\">';
+			strToSend += '<button onclick=\\"sendMessage();\\">Send</button>';
+         strToSend += '</div><h4>Send by username or full name</h4>';
+         strToSend += 'Enter username or full name: <input id=\\"messbyu\\" type=\\"text\\" name=\\"messege\\" maxlength=\\"30\\" placeholder=\\"Username of full name\\">&nbsp<input type=\\"checkbox\\" id=\\"check1\\" name=\\"userok\\" value=\\"userok\\"> Send by username';
+         strToSend += '<br />Enter message: <input id=\\"messbyuc\\" type=\\"text\\"  maxlength=\\"50\\" placeholder=\\"Message\\">';
+         strToSend += '<button onclick=\\"sendMessageByU();\\">Send</button>';
+         strToSend += '</div></div>';
+
          let menu = '';
          if (req.session.admin === undefined) {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
