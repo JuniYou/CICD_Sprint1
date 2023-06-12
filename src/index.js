@@ -541,7 +541,7 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'homepage') {
       if (req.session.username) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:#B0E0E6;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div></div>';
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Trending posts</h3>`;
 
