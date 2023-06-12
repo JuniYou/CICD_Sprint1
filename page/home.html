@@ -6,8 +6,125 @@
   <link rel="stylesheet" href="getstyle">
 
 <script>
+function getUsers() {
+	var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/loadusers');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
 
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        document.getElementById("online").innerHTML = t.users;
+        if(document.getElementById("chat").getElementsByClassName("dot").length>0)
+        {
+          document.getElementById("chatselection").innerHTML="Chat <span class=\"dot\"></span>";
+        }
+        else
+        {
+          document.getElementById("chatselection").innerHTML="Chat";
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "action": "loadusers"
+    }));
+}
+var curUser = "";
+var activeWindow = false;
+function refresh(u) {
+  if(u.length<1)
+    return;
+    if(activeWindow){
+  curUser = u;
+	var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/loadmessages');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        document.getElementById("messege").innerHTML = (t.messages);
+    };
+
+    xhr.send(JSON.stringify({
+      "action": "loadmessages",
+	  "user": u
+    }));
+  }
+    getUsers();
+}
+function refreshAll() {
+  
+	  refresh(curUser);
+
+}
+function sendMessage() {
+  if(document.getElementById("mestext").value.length>0)
+  {
+    var us = curUser;
+  var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/sendmessages');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        if(t.response==='0' && us===curUser)
+        {
+          refresh(curUser);
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "action": "sendmessage",
+	    "user": curUser,
+      "mess": document.getElementById("mestext").value
+    }));
+  }
+}
+function sendMessageByU() {
+  if(document.getElementById("messbyu").value.length>0 && document.getElementById("messbyuc").value.length>0)
+  {
+    var u = document.getElementById("messbyu").value;
+    var c = "0";
+    if(document.getElementById("check1").checked)
+      c="1";
+  var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/sendmessagesbyu');
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        var t = JSON.parse(this.responseText);
+        if(t.response==='0')
+        {
+          refresh(u);
+        }
+        else if(t.response==='1')
+        {
+          alert("This user doesn't exist");
+        }
+        else if(t.response==='2')
+        {
+          alert("More than one user exists with this name, please send by username");
+        }
+        else
+        {
+          alert("Error occured, try again later");
+        }
+    };
+
+    xhr.send(JSON.stringify({
+      "action": "sendmessage",
+	    "user": u,
+      "mess": document.getElementById("messbyuc").value,
+      "c": c
+    }));
+  }
+}
 function loadPage() {
+
+   
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/page_loader');
     xhr.setRequestHeader("Accept", "application/json");
@@ -15,8 +132,16 @@ function loadPage() {
 
     xhr.onload = function () {
         var t = JSON.parse(this.responseText);
+        
         document.getElementById("page_content").innerHTML = (t.response);
         document.getElementById("main_menu").innerHTML = t.menu;
+        
+        document.getElementById("pills-1").innerHTML = document.getElementById("pills-1").innerHTML.replaceAll('\n','<br />');
+        document.getElementById("pills-4").innerHTML = document.getElementById("pills-4").innerHTML.replaceAll('\n','<br />');
+        document.getElementById("pills-5").innerHTML = document.getElementById("pills-5").innerHTML.replaceAll('\n','<br />');
+        document.getElementById("pills-6").innerHTML = document.getElementById("pills-6").innerHTML.replaceAll('\n','<br />');
+        getUsers();
+        setInterval("refreshAll()",1000);
     };
 
     xhr.send(JSON.stringify({
@@ -123,6 +248,15 @@ function DeletePost(p) {
 
   function ChangeSelection(s)
 {
+  
+    if(s===7)
+    {
+      activeWindow = true;
+    }
+    else
+    {
+      activeWindow = false;
+    }
     
       eles = document.getElementsByClassName("opt");
       for (var i=1;i<eles.length+1;i++)

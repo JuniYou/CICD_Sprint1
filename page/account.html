@@ -18,6 +18,8 @@ function loadPage() {
         document.getElementById("page_content").innerHTML = (t.response);
         document.getElementsByClassName("opt")[0].style.background="cyan";
         document.getElementById("main_menu").innerHTML = t.menu;
+        document.getElementById("pills-4").innerHTML = document.getElementById("pills-4").innerHTML.replaceAll('\n','<br />');
+        document.getElementById("pills-5").innerHTML = document.getElementById("pills-5").innerHTML.replaceAll('\n','<br />');
     };
 
     xhr.send(JSON.stringify({
@@ -226,5 +228,6 @@ xhr.send(JSON.stringify({
 <div id="page_content"></div>
   
 </body>
+
 </html>
 
