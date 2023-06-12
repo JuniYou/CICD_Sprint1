@@ -116,7 +116,7 @@ function sendRegister()
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form onsubmit="return false" action="">
+    <form id="regForm" onsubmit="return false" action="">
         <h3>REGISTRATION</h3>
 
         <label for="username">Username</label>
@@ -129,7 +129,7 @@ function sendRegister()
         <input type="password" maxlength="30" placeholder="Password" id="password">
 
         <label for="email">Email</label>
-        <input type="email" maxlength="30" placeholder="email" id="email">
+        <input type="text" maxlength="30" placeholder="email" id="email">
 	<div id="error_box" class="error_box"></div>
         <button onclick="sendRegister()">Register</button>
         
@@ -137,5 +137,7 @@ function sendRegister()
     </form>
   
 </body>
+</body>
+
 </html>
 
