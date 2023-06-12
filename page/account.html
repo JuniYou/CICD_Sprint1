@@ -16,7 +16,7 @@ function loadPage() {
     xhr.onload = function () {
         var t = JSON.parse(this.responseText);
         document.getElementById("page_content").innerHTML = (t.response);
-        document.getElementsByClassName("opt")[0].style.background="cyan";
+        document.getElementsByClassName("opt")[0].style.background="#e6d3af";
         document.getElementById("main_menu").innerHTML = t.menu;
         document.getElementById("pills-4").innerHTML = document.getElementById("pills-4").innerHTML.replaceAll('\n','<br />');
         document.getElementById("pills-5").innerHTML = document.getElementById("pills-5").innerHTML.replaceAll('\n','<br />');
@@ -213,7 +213,7 @@ xhr.send(JSON.stringify({
               else
               {
                 document.getElementById("pills-"+i).style.display = "block";
-                eles[i-1].style.background="cyan";
+                eles[i-1].style.background="#e6d3af";
               }
             }
               

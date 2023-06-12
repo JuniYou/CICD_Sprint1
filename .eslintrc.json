@@ -17,7 +17,8 @@
         "no-continue": "off",
         "no-await-in-loop": "off",
         "no-redeclare": "off",
-        "max-len": "off"
+        "max-len": "off",
+        "no-console": "off"
     }
     
     
