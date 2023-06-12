@@ -1,7 +1,7 @@
 
 body {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-  background: rgb(245, 198, 228);
+  background: rgb(251,251,251);
 }
 .skew-menu {
   text-align: center;
@@ -36,7 +36,7 @@ body {
 }
 .skew-menu ul li:hover {
   background: #eee;
-  color: tomato;
+  color: rgb(101, 147, 193);
 }
 .skew-menu ul li a {
   display: block;
@@ -46,12 +46,12 @@ body {
   transform: skew(0deg);
 }
 .shape:first-child {
-    background: linear-gradient(
-        #1845ad,
-        #23a2f6
-    );
-    left: -80px;
-    top: -80px;
+  background: linear-gradient(
+      #407fbf,
+      #6593C1
+  );
+  left: -80px;
+  top: -80px;
 }
 .shape:last-child {
     background: linear-gradient(
@@ -62,7 +62,7 @@ body {
     right: -80px;
     bottom: -80px;
 }
-form {
+#regForm {
     display: inline;
     background-color: rgba(255,255,255,0.13);
     position: absolute;
@@ -78,13 +78,13 @@ form {
 }
 form *{
     font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-    color: #ffffff;
+    color: rgb(101, 147, 193);
     letter-spacing: 0.4px;
     outline: none;
     border: none;
     margin: 0 auto;
 }
-form h3 {
+#regForm h3 {
     font-size: 32px;
     font-weight: 530;
     line-height: 42px;
@@ -129,7 +129,7 @@ button{
   display: flex;
 }
 .social div {
-  background: red;
+  background: rgb(101, 147, 193);
   width: 150px;
   border-radius: 3px;
   padding: 5px 10px 10px 5px;
@@ -156,7 +156,7 @@ font-size:12px;
   font-size:20px;
   text-align: left;
   margin: auto;
-  color: white;
+  color: rgb(101, 147, 193);
   width:50%; 
   padding: 45px;
   
@@ -167,7 +167,7 @@ font-size:12px;
 }
 .submenu1 {
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
-    color: #ffffff;
+    color: rgb(101, 147, 193);
     letter-spacing: 0.4px;
     outline: none;
     border: none;
@@ -185,7 +185,7 @@ table {
   border-collapse: collapse;
 }
 tr:nth-child(odd) {
-  background-color: #eee;
+  background-color: #fbfbfb;
 }
 td {
   text-align: center;
@@ -193,39 +193,45 @@ td {
 }
 .postdiv {
   
-    border: 0.5rem outset rgb(240, 13, 153);
-    outline: 0.5rem solid rgb(124, 64, 104);
-    box-shadow: 0 0 0 1rem rgb(177, 96, 209);
+    border: 0.5rem outset rgb(217,196,169);
+    outline: 0.5rem solid rgb(216,208,197);
+    box-shadow: 0 0 0 1rem rgb(227, 222, 215);
     border-radius: 12px;
     font: bold 1rem sans-serif;
     margin: 2rem;
     padding: 1rem;
     outline-offset: 0.5rem;
-    background-color: rgb(228, 230, 221);
+    background-color: rgb(251,251,251);
     text-align:center;
 }
 button {
     
-    outline:  0.2rem solid rgb(124, 64, 104);
-    background-color:  rgb(252, 199, 223);
+  outline:  0.2rem solid rgb(42, 55, 69);
+  background-color:  rgb(251,251,251);
 }
 input[type=button] {
-    outline:  0.2rem solid rgb(124, 64, 104);
-    background-color:  rgb(252, 199, 223);
-    display: table-cell;
-    margin:10px;
-    width: 100%;
+  outline:  0.2rem solid rgb(42, 55, 69);
+  background-color:  rgb(251,251,251);
+  display: table-cell;
+  margin:10px;
+  width: 100%;
 }
 input[type=text] {
-    outline:  0.2rem solid rgb(124, 64, 104);
-    background-color:  rgb(252, 199, 223);
-    display: table-cell;
-    margin:10px;
-    width: 100%;
+  outline:  0.2rem solid rgb(42, 55, 69);
+  background-color:  rgb(251,251,251);
+  display: table-cell;
+  margin:10px;
+  width: 100%;
+}
+input[type=checkbox] {
+  display:inline;
+  padding: 3px;
+  margin: 3px;
+  height: 20px;
 }
   input[type=password] {
-    outline:  0.2rem solid rgb(124, 64, 104);
-    background-color:  rgb(252, 199, 223);
+    outline:  0.2rem solid rgb(42, 55, 69);
+    background-color:  rgb(251,251,251);
     display: table-cell;
     margin:10px;
     width: 100%;
@@ -233,8 +239,49 @@ input[type=text] {
 h5 {
     padding: 10px;
     margin: auto;
-    outline:  0.2rem solid rgb(124, 64, 104);
-    background-color:  rgb(252, 199, 223);
+    outline:  0.2rem solid rgb(42, 55, 69);
+    background-color:  rgb(251,251,251);
     width: 70%;
     text-align:center;
 }
+
+#messege {min-height:300px; height:300px; border:1px solid rgba(77,19,5,.3); text-align:center; border-top:none; padding:5px; float:left; width:599px; overflow:auto;}
+		#messege img, .messege {vertical-align:middle;}
+			#allmessege, #processing, #allonline {display:none; position:absolute; left:-9999px;}
+			.messege {text-align:left; border-top:1px solid #E6D3AF; border-bottom:1px solid #DBBF8B; padding:5px 0;}
+			.messege:first-child, #allstats .object {border-top:none;}
+			.messege:last-child, #allstats .object {border-bottom:none;}
+			.messege .time {color:#ae9077;}
+			.messege .login {cursor:pointer;}
+			.messege .login:hover {color:rgb(101, 147, 193);}
+		#online {min-height:300px; height:300px; border:1px solid rgba(77,19,5,.3); text-align:left; border-top:none; border-left:none; padding:5px;  width:138px; overflow:auto;}
+		#controlpanel {position:absolute; width:138px; margin:-38px 0 0 610px; border-top:1px solid rgba(77,19,5,.3); padding:5px; text-align:center;}
+#messege::-webkit-scrollbar,#online::-webkit-scrollbar {width: 0;}
+#messegeForm {margin:10px 0 0 0;}
+#messegeForm input {width:498px; padding:15px 100px 15px 10px;}
+#messegeForm .button {width:590px; padding:15px 34px;}
+#messegeForm {margin:10px 0 0 0;}
+#messegeForm input {width:498px; padding:15px 100px 15px 10px;}
+#messegeForm .button {width:590px; padding:15px 34px;}
+.grey {color:#6a5e49;}
+.login {width:95px;}
+.messege .login {cursor:pointer;}
+.messege .login:hover {color:rgb(101, 147, 193);}
+.orange {color:#bb0000;}
+.dot {
+  height: 12px;
+  width: 12px;
+  background-color: rgb(255, 0, 0);
+  border-radius: 50%;
+  display: inline-block;
+}
+.likebutton {
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(32deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
+  transition: all 1.5s ease;
+  font-family: 'Ropa Sans', sans-serif;
+  font-weight: bold;
+  letter-spacing: 0.05rem;
+  padding: 0;
+ }
