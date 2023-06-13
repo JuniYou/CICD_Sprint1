@@ -15,18 +15,9 @@ const client = new Client({
    ssl: true,
 });
 
-/*
-const client = new Client({
-   user: 'postgres',
-   host: 'localhost',
-   database: 'postgres',
-   password: 'aaaaaa',
-   port: 5432
- }); */
-
 client.connect();
 const port = process.env.PORT || 80;
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
@@ -67,6 +58,21 @@ function cleanFullName(str) {
       }
    }
    return true;
+}
+function lastIndexOf(str, ch) {
+   for (let i = str.length - 1; i >= 0; i -= 1) {
+      if (str[i] === ch) {
+         return i;
+      }
+   }
+   return -1;
+}
+function substr(str, start, end) {
+   let ret = '';
+   for (let i = start; i < end; i += 1) {
+      ret += str[i];
+   }
+   return ret;
 }
 app.get('/', (req, res) => {
    if (req.session.username === undefined) {
@@ -143,7 +149,7 @@ app.get('/Account', async (req, res) => {
                let res2 = await client.query('SELECT * FROM follows WHERE username= $1 AND follows = $2', [req.session.username, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (req.session.username !== acc) {
                   if (res2.rows.length > 0) { followed = true; }
-                  strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input type="button" value="`;
+                  strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input style=\\"width: 1000px\\" type="button" value="`;
                   if (!followed) {
                      strToSend += 'Follow';
                   } else {
@@ -151,13 +157,14 @@ app.get('/Account', async (req, res) => {
                   }
                   strToSend += `" onclick="Follow('${res1.rows[0].username}')"></td></tr></table></div>`;
                }
+
                // posts
                strToSend += '<h4 class="table_title">Latest posts by this user</h4>';
                res2 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby= $1 UNION SELECT * FROM posts p WHERE p.pid=ANY(SELECT s.pid FROM shares s WHERE s.username = $2) ORDER BY publishdate DESC', [acc, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
 
                for (let i = 0; i < res2.rows.length; i += 1) {
                   strToSend += '<div class="postdiv">';
-                  strToSend = `${strToSend}<h4>${res2.rows[i].title}</h4><h5>${res2.rows[i].content}</h5><h6>Post date: ${res2.rows[i].publishdate} by user: <a href = "/Account?acc=${res2.rows[i].postedby}">${res2.rows[i].postedby}</a>`;
+                  strToSend = `${strToSend}<h4>${res2.rows[i].title}</h4><h5>${res2.rows[i].content}</h5><h6>Post date: ${substr(String(res2.rows[i].publishdate), 0, lastIndexOf(String(res2.rows[i].publishdate), ':'))} by user: <a href = "/Account?acc=${res2.rows[i].postedby}">${res2.rows[i].postedby}</a>`;
                   if (res2.rows[i].postedby !== acc) {
                      strToSend += ` Shared by: <a href = "/Account?acc=${acc}">${acc}</a>`;
                   }
@@ -212,7 +219,7 @@ app.get('/Post', async (req, res) => {
                let strToSend = '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Programmers network</title><script src="/getjs"></script><script src="/getjscomment"></script><link rel="stylesheet" href="getstyle"></head><body onload="loadp();"><nav class="skew-menu"><ul><li><a href="/Home">Home</a></li><li><a href="/Account">Personal Area</a></li><li><a href="/Logout">Log Out</a></li></ul></nav><div id="page_content">';
 
                strToSend += '<div class="postdiv">';
-               strToSend = `${strToSend}<h4>${res1.rows[0].title}</h4><h5>${res1.rows[0].content}</h5><h6>Post date: ${res1.rows[0].publishdate} by user: <a href = "/Account?acc=${res1.rows[0].postedby}">${res1.rows[0].postedby}</a>`;
+               strToSend = `${strToSend}<h4>${res1.rows[0].title}</h4><h5>${res1.rows[0].content}</h5><h6>Post date: ${substr(String(res1.rows[0].publishdate), 0, lastIndexOf(String(res1.rows[0].publishdate), ':'))} by user: <a href = "/Account?acc=${res1.rows[0].postedby}">${res1.rows[0].postedby}</a>`;
 
                strToSend += '</h6>';
                if (res1.rows[0].postedby !== req.session.username) {
@@ -245,7 +252,7 @@ app.get('/Post', async (req, res) => {
                const res55 = await client.query('SELECT * FROM comment WHERE pid= $1 ORDER BY date DESC', [pid]);
                for (let i = 0; i < res55.rows.length; i += 1) {
                   strToSend += '<div class="postdiv">';
-                  strToSend = `${strToSend}<h5>${res55.rows[i].content}</h5><h6>Comment date: ${res55.rows[i].date} by user: <a href = "/Account?acc=${res55.rows[i].uname}">${res55.rows[i].uname}</a>`;
+                  strToSend = `${strToSend}<h5>${res55.rows[i].content}</h5><h6>Comment date: ${substr(String(res55.rows[i].date), 0, lastIndexOf(String(res55.rows[i].date), ':'))} by user: <a href = "/Account?acc=${res55.rows[i].uname}">${res55.rows[i].uname}</a>`;
                   strToSend += '</h6>';
                   if (res55.rows[i].uname === req.session.username || req.session.admin !== undefined) {
                      strToSend += `<button onclick="DeleteComment(${res55.rows[i].cid})">Delete comment</button>`;
@@ -586,7 +593,7 @@ app.post('/loadmessages', async (req, res) => {
          }
          const res2 = await client.query('SELECT fullname FROM users WHERE username = $1', [webData.user]);
          if (res2.rows.length < 1) return;
-         strToSend += `<h5>Chat with <span style=\\"color:green;\\">${webData.user} (${res2.rows[0].fullname}) </span></h5>`;
+         strToSend += `<h5>Chat with <span style=\\"color:green;\\">${webData.user} (${res2.rows[0].fullname})</span></h5>`;
          for (let i = 0; i < messages.length; i += 1) {
             if (ms[i] === 1) strToSend += `<div class=\\"messege\\"><span class=\\"login orange\\"><span style=\\"color:green;\\">You: </span>${messages[i]}</span></div>`;
             else strToSend += `<div class=\\"messege\\"><span class=\\"login orange\\"><span style=\\"color:green;\\">${webData.user}: </span>${messages[i]}</span></div>`;
@@ -671,7 +678,7 @@ app.post('/page_loader', async (req, res) => {
          let strToSend = '<div class=\\"submenu1\\"><div class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Account details</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">Followed users</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Followers list</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Liked posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Saved posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Statistics</div></div>';
          let res1 = await client.query('SELECT * FROM users WHERE username= $1', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          if (res1.rows.length > 0) {
-            strToSend = `${strToSend}<div id=\\"pills-1\\"><h4 class=\\"table_title\\">Account Details</h4><table><tr><td>Username:</td><td><input type=\\"text\\" disabled maxlength=\\"100\\" value=\\"${req.session.username}\\"></td></tr><tr><td>Password (type new password if you want to change):</td><td><input id=\\"pass1\\" type=\\"password\\" maxlength=\\"100\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePass()\\"></td></tr><tr><td>E-mail:</td><td><input id=\\"email1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].email}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveEmail()\\"></td></tr><tr><td>Full name:</td><td><input id=\\"fname1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].fullname}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveFname()\\"></td></tr><tr><td><input type=\\"button\\" value=\\"Delete Account\\" onclick=\\"DeleteAcc()\\"></td></tr></table></div>`;
+            strToSend = `${strToSend}<div id=\\"pills-1\\"><h4 class=\\"table_title\\">Account Details</h4><table><tr><td>Username:</td><td><input type=\\"text\\" disabled maxlength=\\"100\\" value=\\"${req.session.username}\\"></td></tr><tr><td>Password (type new password if you want to change):</td><td><input id=\\"pass1\\" type=\\"password\\" maxlength=\\"100\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SavePass()\\"></td></tr><tr><td>E-mail:</td><td><input id=\\"email1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].email}\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SaveEmail()\\"></td></tr><tr><td>Full name:</td><td><input id=\\"fname1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].fullname}\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SaveFname()\\"></td></tr><tr><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Delete Account\\" onclick=\\"DeleteAcc()\\"></td></tr></table></div>`;
          } else {
             return;
          }
@@ -698,7 +705,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<table border=\\"1\\"><tr><td>Username</td><td>Full name</td><td>Delete</td></tr>';
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<tr>';
-            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
+            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input style=\\"width: 180px\\" type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
             strToSend += '</tr>';
          }
          strToSend += '</table>';
@@ -710,7 +717,7 @@ app.post('/page_loader', async (req, res) => {
 
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div class=\\"postdiv\\">';
-            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
+            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
                let like = 'Like';
                let save = 'Save';
@@ -741,7 +748,7 @@ app.post('/page_loader', async (req, res) => {
 
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div class=\\"postdiv\\">';
-            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
+            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
                let like = 'Like';
                let save = 'Save';
@@ -786,13 +793,13 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'homepage') {
       if (req.session.username) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:#e6d3af;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div><div id=\\"chatselection\\" class=\\"opt\\" onclick=\\"ChangeSelection(7)\\">Chat</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:rgba(101, 147, 193, 0.541);\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div><div id=\\"chatselection\\" class=\\"opt\\" onclick=\\"ChangeSelection(7)\\">Chat</div></div>';
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Trending posts</h3>`;
 
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div class=\\"postdiv\\" style=\\"width=50%; text-align:center;\\">';
-            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
+            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
                let like = 'Like';
                let save = 'Save';
@@ -822,7 +829,7 @@ app.post('/page_loader', async (req, res) => {
          res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby = $1 ORDER BY publishdate DESC', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div style=\\"width=50%; text-align:center;\\">';
-            strToSend = `${strToSend}Title: <input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"><br />Text:<br /><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"10\\" cols=\\"70\\">${res1.rows[i].content}</textarea><br />Post date: ${res1.rows[i].publishdate}<br /><button onclick=\\"SavePost('${res1.rows[i].pid}')\\">Save changes</button><button onclick=\\"DeletePost('${res1.rows[i].pid}')\\">Delete post</button>`;
+            strToSend = `${strToSend}Title: <input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"><br />Text:<br /><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"10\\" cols=\\"70\\">${res1.rows[i].content}</textarea><br />Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))}<br /><button onclick=\\"SavePost('${res1.rows[i].pid}')\\">Save changes</button><button onclick=\\"DeletePost('${res1.rows[i].pid}')\\">Delete post</button>`;
             strToSend += '</div>';
             strToSend += '<hr>';
          }
@@ -843,7 +850,7 @@ app.post('/page_loader', async (req, res) => {
          for (let i = 0; i < res1.rows.length; i += 1) {
             if (res1.rows[i].postedby !== req.session.username) {
                strToSend += '<div class=\\"postdiv\\"\\">';
-               strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a>`;
+               strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a>`;
                const res5 = await client.query('SELECT * FROM follows WHERE username = $1 AND follows = $2', [req.session.username, res1.rows[i].postedby]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
                if (res5.rows.length === 0) {
                   const res6 = await client.query('SELECT * FROM shares WHERE pid = $1 AND username = ANY(SELECT follows from follows WHERE username = $2) LIMIT 1', [res1.rows[i].pid, req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -881,7 +888,7 @@ app.post('/page_loader', async (req, res) => {
 
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<div class=\\"postdiv\\">';
-            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${res1.rows[i].publishdate} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
+            strToSend = `${strToSend}<h4>${res1.rows[i].title}</h4><h5>${res1.rows[i].content}</h5><h6>Post date: ${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))} by user: <a href = \\"/Account?acc=${res1.rows[i].postedby}\\">${res1.rows[i].postedby}</a></h6>`;
             if (res1.rows[i].postedby !== req.session.username) {
                let like = 'Like';
                let save = 'Save';
@@ -971,7 +978,7 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'adminpage') {
       if (req.session.username && req.session.admin) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:#e6d3af;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:rgba(101, 147, 193, 0.541);\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
 
          // selection 1
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -979,7 +986,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<table border=\\"1\\"><tr><td>ID</td><td>Title</td><td>Content</td><td>Posted by</td><td>Publish date</td><td>Save</td><td>Delete</td></tr>';
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += `<tr id=\\"line${res1.rows[i].pid}\\">`;
-            strToSend = `${strToSend}<td>${res1.rows[i].pid}</td><td><input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"></td><td><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"5\\" cols=\\"50\\">${res1.rows[i].content}</textarea></td><td>${res1.rows[i].postedby}</td><td>${res1.rows[i].publishdate}</td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePost('${res1.rows[i].pid}')\\"></td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"DeletePost('${res1.rows[i].pid}')\\"></td>`;
+            strToSend = `${strToSend}<td>${res1.rows[i].pid}</td><td><input type=\\"text\\" id=\\"titlein${res1.rows[i].pid}\\" maxlength=\\"200\\" value=\\"${res1.rows[i].title}\\"></td><td><textarea maxlength=\\"5000\\" id=\\"contentTe${res1.rows[i].pid}\\" rows=\\"5\\" cols=\\"50\\">${res1.rows[i].content}</textarea></td><td>${res1.rows[i].postedby}</td><td>${substr(String(res1.rows[i].publishdate), 0, lastIndexOf(String(res1.rows[i].publishdate), ':'))}</td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePost('${res1.rows[i].pid}')\\"></td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"DeletePost('${res1.rows[i].pid}')\\"></td>`;
             strToSend += '</tr>';
          }
          strToSend += '</table>';

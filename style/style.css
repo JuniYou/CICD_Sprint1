@@ -116,7 +116,7 @@ input {
 }
 
 ::placeholder {
-  color: #e5e5e5;
+  color: rgba(101, 147, 193, 0.616);
 }
 
 button {
@@ -132,6 +132,28 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+button {
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  margin-top: 50px;
+  width: 20%;
+  height: 50px;
+  background-color: #ffffff;
+  color: #555;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 25px;
+  border: 2px solid rgb(101, 147, 193);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #eee;
+  color: rgb(101, 147, 193);
+  transform: scale(1.05);
 }
 
 button:hover {
@@ -217,15 +239,11 @@ td {
 }
 
 .postdiv {
-  border: 0.5rem outset rgb(217, 196, 169);
-  outline: 0.5rem solid rgb(216, 208, 197);
-  box-shadow: 0 0 0 1rem rgb(227, 222, 215);
-  border-radius: 12px;
-  font: bold 1rem sans-serif;
-  margin: 2rem;
-  padding: 1rem;
-  outline-offset: 0.5rem;
+  border-radius: 20px;
+  border: 2px solid rgb(101, 147, 193);
   background-color: rgb(251, 251, 251);
+  padding: 1rem;
+  margin: 2rem;
   text-align: center;
 }
 
@@ -274,174 +292,75 @@ h5 {
 }
 
 #messege {
-  min-height: 300px;
   height: 300px;
-  border: 1px solid rgba(77, 19, 5, 0.3);
-  text-align: center;
+  border: 1px solid #ccc;
   border-top: none;
-  padding: 5px;
-  float: left;
-  width: 599px;
+  padding: 10px;
   overflow: auto;
 }
 
-#messege img,
 .messege {
-  vertical-align: middle;
-}
-
-#allmessege,
-#processing,
-#allonline {
-  display: none;
-  position: absolute;
-  left: -9999px;
-}
-
-.messege {
-  text-align: left;
-  border-top: 1px solid #e6d3af;
-  border-bottom: 1px solid #dbbf8b;
-  padding: 5px 0;
-}
-
-.messege:first-child,
-#allstats .object {
-  border-top: none;
-}
-
-.messege:last-child,
-#allstats .object {
-  border-bottom: none;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
 }
 
 .messege .time {
-  color: #ae9077;
+  color: #999;
+  font-size: 12px;
 }
 
 .messege .login {
   cursor: pointer;
+  color: #657daf;
+  font-weight: bold;
 }
 
-.messege .login:hover {
-  color: rgb(101, 147, 193);
-}
-
-#online {
-  min-height: 300px;
-  height: 300px;
-  border: 1px solid rgba(77, 19, 5, 0.3);
-  text-align: left;
-  border-top: none;
-  border-left: none;
-  padding: 5px;
-  width: 138px;
-  overflow: auto;
-}
-
-#controlpanel {
-  position: absolute;
-  width: 138px;
-  margin: -38px 0 0 610px;
-  border-top: 1px solid rgba(77, 19, 5, 0.3);
-  padding: 5px;
-  text-align: center;
-}
-
-#messege::-webkit-scrollbar,
-#online::-webkit-scrollbar {
-  width: 0;
-}
-
-#messegeForm,
-#onlineForm {
-  margin: 10px 0 0 0;
-}
-
-#messegeForm input,
-#onlineForm input {
-  width: 498px;
-  padding: 15px 100px 15px 10px;
-}
-
-#messegeForm .button,
-#onlineForm .button {
-  width: 590px;
-  padding: 15px 34px;
-}
-
-.grey {
-  color: #6a798a;
-}
-
-.border {
-  border-bottom: 1px solid #e6e9ed;
-  padding-bottom: 10px;
-}
-
-input[type="checkbox"] {
-  width: auto;
-  margin: 0 0 0 10px;
-  display: inline-block;
-}
-
-textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 10px;
-  margin: 5px 0;
-  resize: none;
-}
-
-textarea:focus,
-input[type="text"]:focus {
-  outline-color: #65707b;
-}
-
-textarea::-webkit-scrollbar {
-  width: 5px;
+#messege::-webkit-scrollbar {
+  width: 8px;
   background-color: #f5f5f5;
 }
 
-textarea::-webkit-scrollbar-thumb {
+#messege::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: #000000;
+  background-color: #999;
 }
 
-.imgtext {
-  position: relative;
+input[type="button"]
+{
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  margin-top: 50px;
+  width: 200px;
+  box-sizing: border-box;
+  height: 50px;
+  background-color: #ffffff;
+  color: #555;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 25px;
+  border: 2px solid rgb(101, 147, 193);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.imgtext:hover .overlay {
-  opacity: 1;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
+.btnrrrrrr
+{
+  
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  margin-top: 50px;
   width: 100%;
-  opacity: 0;
-  transition: 0.5s ease;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.text {
-  color: white;
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.imgtext img {
-  width: 100%;
-  height: auto;
-  opacity: 0.7;
+  height: 50px;
+  background-color: #ffffff;
+  color: #555;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 25px;
+  border: 2px solid rgb(101, 147, 193);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }

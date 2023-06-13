@@ -1,5 +1,7 @@
 import {expect} from "chai";
 import * as fs from "fs";
+import request from 'supertest';
+import {app} from '../src/index.js';
 
 describe('Contents', () => {
     describe('Main page', () =>{
@@ -16,6 +18,21 @@ describe('Contents', () => {
             expect(ind).not.to.be.eql(-1);
         })
     })
+    describe('Path testing',async()=>{
+        it('Test 1', async () =>{
+            const res = await request(app).get('/');
+            expect(res.statusCode).to.be.eql(200);
+            
+        })
+        it('Test 2', async () =>{
+            const res = await request(app).get('/3485');
+            expect(res.statusCode).to.be.eql(404);
+        })
+        it('exit', async () =>{
+            process.exit(0);
+        })
+    })
 })
+
 
 

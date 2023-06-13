@@ -18,7 +18,8 @@
         "no-await-in-loop": "off",
         "no-redeclare": "off",
         "max-len": "off",
-        "no-console": "off"
+        "no-console": "off",
+        "import/prefer-default-export": "off"
     }
     
     
