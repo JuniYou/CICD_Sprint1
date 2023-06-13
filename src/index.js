@@ -1097,15 +1097,15 @@ app.post('/process_post_req', async (req, res) => {
                   res.send(obj);
                } else {
                   if (res11.rows.length === 0) {
-                     client.query('DELETE from login WHERE ipaddress = $1 ', [ip.address()]);
-                     client.query('INSERT INTO login (ipaddress, failures, lastdate) values($1, 1, now())', [ip.address()]);
-                     client.query('DELETE from login WHERE ipaddress = $1 ', [req.socket.remoteAddress]);
-                     client.query('INSERT INTO login (ipaddress, failures, lastdate) values($1, 1, now())', [req.socket.remoteAddress]);
+                     client.query('DELETE from login WHERE ipaddress = $1 ', [requestIp.getClientIp(req)]);
+                     client.query('INSERT INTO login (ipaddress, failures, lastdate) values($1, 1, now())', [requestIp.getClientIp(req)]);
                   } else {
-                     client.query('UPDATE login SET failures = 1 + failures WHERE ipaddress = $1', [ip.address()]);
-                     client.query('UPDATE login SET failures = 1 + failures WHERE ipaddress = $1', [req.socket.remoteAddress]);
+                     client.query('UPDATE login SET failures = 1 + failures WHERE ipaddress = $1', [requestIp.getClientIp(req)]);
                   }
-         }});
+                  const obj = '{"response": "1"}';
+                  res.send(obj);
+               }
+            });
          } // Register
       } else if (type !== undefined && type === 'process_register' && webData.password !== undefined && webData.username !== undefined && webData.email !== undefined && webData.fullname !== undefined) {
          const uname = webData.username;
