@@ -1179,7 +1179,24 @@ app.post('/process_post_req', async (req, res) => {
       console.error(err);
    }
 });
+// Start the server if not running in a test environment
+if (process.env.NODE_ENV !== 'test') {
+   const server = app.listen(port, () => {
+     console.log(`Listening on port ${port}`);
+   });
+}
 
-app.listen(port, () => {
-   console.log(`Listening on port ${port}`);
-});
+ 
+// Close the server when the process is terminated
+process.on('SIGINT', () => {
+   console.log('Closing server...');
+   server.close(() => {
+     console.log('Server closed');
+     client.end(() => {
+       console.log('Database connection closed');
+       process.exit(0);
+     });
+   });
+ });
+ 
+ export default app; // Export the app variable
