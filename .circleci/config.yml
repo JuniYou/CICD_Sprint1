@@ -19,7 +19,7 @@ jobs:
           command: npm install
       - run:
           name: run tests
-          command: npm run test:babel
+          command: npm run test:b
       - run:
           name: run linter
           command: npm run lint
