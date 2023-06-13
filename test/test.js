@@ -31,6 +31,20 @@ afterAll(async () => {
   await server.close();
 });
 
+//Select fron db.
+describe('GET /api/users', () => {
+  it('responds with JSON array', (done) => {
+    request(server)
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body).toBeInstanceOf(Array);
+        done();
+      });
+  });
+
 describe('GET /', () => {
   it('responds with HTML page containing Who we are content', (done) => {
     request(server)
@@ -52,6 +66,39 @@ describe('GET /Account', () => {
       .end((err, res) => {
         if (err) return done(err);
         expect(res.text).toContain('Found');
+        done();
+      });
+  });
+});
+describe('GET /Login', () => {
+  it('responds with HTML page containing login information', (done) => {
+    request(server)
+      .get('/Login')
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+})
+describe('GET /Register', () => {
+  it('responds with HTML page containing register information', (done) => {
+    request(server)
+      .get('/Register')
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+});
+describe('GET /admin', () => {
+  it('responds with HTML page containing admin information', (done) => {
+    request(server)
+      .get('/Login')
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
         done();
       });
   });
