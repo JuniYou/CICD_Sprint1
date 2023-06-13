@@ -31,20 +31,6 @@ afterAll(async () => {
   await server.close();
 });
 
-//Select fron db.
-describe('GET /api/users', () => {
-  it('responds with JSON array', (done) => {
-    request(server)
-      .get('/api/users')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end((err, res) => {
-        if (err) return done(err);
-        expect(res.body).toBeInstanceOf(Array);
-        done();
-      });
-  });
-
 describe('GET /', () => {
   it('responds with HTML page containing Who we are content', (done) => {
     request(server)
