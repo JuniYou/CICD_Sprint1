@@ -38,14 +38,13 @@
     "supertest": "^6.3.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.21.0",
+    "@babel/cli": "^7.22.0",
     "@babel/core": "^7.22.5",
     "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
-    "babel-cli": "^7.21.0",
     "babel-jest": "^29.5.0",
     "chai": "^4.3.7",
     "eslint": "^8.42.0",
@@ -54,4 +53,6 @@
     "mocha": "^10.2.0",
     "nodemon": "^2.0.22"
   }
+  
+  
 }
