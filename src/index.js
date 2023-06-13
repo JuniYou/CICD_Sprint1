@@ -1140,10 +1140,6 @@ app.post('/process_post_req', async (req, res) => {
    }
 });
 
-app.listen(port, () => {
-   console.log(`Listening on port ${port}`);
-});
-
 // Start the server if not running in a test environment
 if (process.env.NODE_ENV !== 'test') {
    app.listen(port, () => {
