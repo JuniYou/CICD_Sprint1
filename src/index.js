@@ -15,15 +15,6 @@ const client = new Client({
    ssl: true,
 });
 
-/*
-const client = new Client({
-   user: 'postgres',
-   host: 'localhost',
-   database: 'postgres',
-   password: 'aaaaaa',
-   port: 5432
- });*/
-
 
 client.connect();
 const port = process.env.PORT || 80;
@@ -165,7 +156,7 @@ app.get('/Account', async (req, res) => {
                if(req.session.username!=acc)
                {
                   if (res2.rows.length > 0) { followed = true; }
-                  strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input type="button" value="`;
+                  strToSend += `<h4 class="table_title">Account Details</h4><table><tr><td>Username: ${res1.rows[0].username}</td></tr><tr><td>E-mail: ${res1.rows[0].email}</td></tr><tr><td>Full name: ${res1.rows[0].fullname}</td></tr><tr><td><input style=\\"width: 1000px\\" type="button" value="`;
                   if (!followed) {
                      strToSend += 'Follow';
                   } else {
@@ -173,6 +164,9 @@ app.get('/Account', async (req, res) => {
                   }
                   strToSend += `" onclick="Follow('${res1.rows[0].username}')"></td></tr></table></div>`;
                }
+
+
+               
                // posts
                strToSend += '<h4 class="table_title">Latest posts by this user</h4>';
                res2 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' AND postedby= $1 UNION SELECT * FROM posts p WHERE p.pid=ANY(SELECT s.pid FROM shares s WHERE s.username = $2) ORDER BY publishdate DESC', [acc, acc]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
@@ -731,7 +725,7 @@ app.post('/page_loader', async (req, res) => {
          let strToSend = '<div class=\\"submenu1\\"><div class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Account details</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">Followed users</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Followers list</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Liked posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Saved posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Statistics</div></div>';
          let res1 = await client.query('SELECT * FROM users WHERE username= $1', [req.session.username]); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          if (res1.rows.length > 0) {
-            strToSend = `${strToSend}<div id=\\"pills-1\\"><h4 class=\\"table_title\\">Account Details</h4><table><tr><td>Username:</td><td><input type=\\"text\\" disabled maxlength=\\"100\\" value=\\"${req.session.username}\\"></td></tr><tr><td>Password (type new password if you want to change):</td><td><input id=\\"pass1\\" type=\\"password\\" maxlength=\\"100\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SavePass()\\"></td></tr><tr><td>E-mail:</td><td><input id=\\"email1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].email}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveEmail()\\"></td></tr><tr><td>Full name:</td><td><input id=\\"fname1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].fullname}\\"></td><td><input type=\\"button\\" value=\\"Save\\" onclick=\\"SaveFname()\\"></td></tr><tr><td><input type=\\"button\\" value=\\"Delete Account\\" onclick=\\"DeleteAcc()\\"></td></tr></table></div>`;
+            strToSend = `${strToSend}<div id=\\"pills-1\\"><h4 class=\\"table_title\\">Account Details</h4><table><tr><td>Username:</td><td><input type=\\"text\\" disabled maxlength=\\"100\\" value=\\"${req.session.username}\\"></td></tr><tr><td>Password (type new password if you want to change):</td><td><input id=\\"pass1\\" type=\\"password\\" maxlength=\\"100\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SavePass()\\"></td></tr><tr><td>E-mail:</td><td><input id=\\"email1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].email}\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SaveEmail()\\"></td></tr><tr><td>Full name:</td><td><input id=\\"fname1\\" type=\\"text\\" maxlength=\\"100\\" value=\\"${res1.rows[0].fullname}\\"></td><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Save\\" onclick=\\"SaveFname()\\"></td></tr><tr><td><input style=\\"width: 200px\\" type=\\"button\\" value=\\"Delete Account\\" onclick=\\"DeleteAcc()\\"></td></tr></table></div>`;
          } else {
             return;
          }
@@ -758,7 +752,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<table border=\\"1\\"><tr><td>Username</td><td>Full name</td><td>Delete</td></tr>';
          for (let i = 0; i < res1.rows.length; i += 1) {
             strToSend += '<tr>';
-            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
+            strToSend = `${strToSend}<td><a href = \\"/Account?acc=${res1.rows[i].follower}\\">${res1.rows[i].follower}</a></td><td>${res1.rows[i].fu}</td><td><input style=\\"width: 180px\\" type=\\"button\\" value=\\"Delete\\" onclick=\\"Deletefollower('${res1.rows[i].follower}')\\"></td>`;
             strToSend += '</tr>';
          }
          strToSend += '</table>';
@@ -846,7 +840,7 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'homepage') {
       if (req.session.username) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div><div id=\\"chatselection\\" class=\\"opt\\" onclick=\\"ChangeSelection(7)\\">Chat</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:rgba(101, 147, 193, 0.541);\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Trending posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">My posts</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Add new post</div><div class=\\"opt\\" onclick=\\"ChangeSelection(4)\\">Posts by people I follow</div><div class=\\"opt\\" onclick=\\"ChangeSelection(5)\\">Posts I shared</div><div class=\\"opt\\" onclick=\\"ChangeSelection(6)\\">Daily tip</div><div id=\\"chatselection\\" class=\\"opt\\" onclick=\\"ChangeSelection(7)\\">Chat</div></div>';
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC LIMIT 20'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY
          strToSend = `${strToSend}<div id=\\"pills-1\\"><h3 class=\\"table_title\\">Trending posts</h3>`;
 
@@ -1020,6 +1014,7 @@ app.post('/page_loader', async (req, res) => {
          strToSend += '<button onclick=\\"sendMessageByU();\\">Send</button>';
          strToSend += '</div></div>';
 
+
          let menu = '';
          if (req.session.admin === undefined) {
             menu += '<li><a href=\\"/Home\\">Home</a></li><li><a href=\\"/Account\\">Personal Area</a></li><li><a href=\\"/Logout\\">Log Out</a></li>';
@@ -1031,7 +1026,7 @@ app.post('/page_loader', async (req, res) => {
       }
    } else if (webData.info !== undefined && webData.info === 'adminpage') {
       if (req.session.username && req.session.admin) {
-         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:cyan;\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
+         let strToSend = '<div class=\\"submenu1\\"><div style=\\"background-color:rgba(101, 147, 193, 0.541);\\" class=\\"opt\\" onclick=\\"ChangeSelection(1)\\">Post managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(2)\\">User managing</div><div class=\\"opt\\" onclick=\\"ChangeSelection(3)\\">Daily tips managing</div></div>';
 
          // selection 1
          let res1 = await client.query('SELECT * FROM posts WHERE deleted = \'0\' ORDER BY publishdate DESC'); // DATABASE CONNECTION ARE IN DIFFERENT THREADS, NEED MANUAL TERAPY

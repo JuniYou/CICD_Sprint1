@@ -116,7 +116,7 @@ input {
 }
 
 ::placeholder {
-  color: #e5e5e5;
+  color: rgba(101, 147, 193, 0.616);
 }
 
 button {
@@ -326,6 +326,26 @@ h5 {
   border-radius: 5px;
   background-color: #999;
 }
+
+input[type="button"]
+{
+  font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  margin-top: 50px;
+  width: 200px;
+  box-sizing: border-box;
+  height: 50px;
+  background-color: #ffffff;
+  color: #555;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 25px;
+  border: 2px solid rgb(101, 147, 193);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .btnrrrrrr
 {
   
