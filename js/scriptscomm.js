@@ -1,6 +1,6 @@
 function AddComment(p) {
     var content = document.getElementById("contentComment").value;
-    if (content.length < 10|| content.indexOf('<')!=-1)
+    if (content.length < 10)
     {
       alert("Minimun content length is 10");
       return;
