@@ -11,7 +11,6 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "lint": "eslint src/* --color",
-    "test": "jest --color --forceExit --verbose",
     "test:babel": "babel src --out-dir dist --extensions '.js,.jsx' && jest --color --detectOpenHandles --forceExit --verbose"
   }
   ,
